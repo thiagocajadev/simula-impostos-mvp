@@ -1,6 +1,6 @@
-import type { CurrentTaxes, InvoiceItem, ReformTaxes, TaxItem, TaxRegime } from "../types";
+import type { CurrentTaxes, InvoiceItem, ReformTaxes, TaxItem, TaxRegime } from "./invoice.types";
 
-export const CURRENT_TAX_LABELS: Record<keyof CurrentTaxes, string> = {
+const CURRENT_TAX_LABELS: Record<keyof CurrentTaxes, string> = {
   taxIcms: "ICMS",
   taxIss: "ISS",
   taxIpi: "IPI",
@@ -10,13 +10,13 @@ export const CURRENT_TAX_LABELS: Record<keyof CurrentTaxes, string> = {
   taxCsll: "CSLL",
 };
 
-export const REFORM_TAX_LABELS: Record<keyof ReformTaxes, string> = {
+const REFORM_TAX_LABELS: Record<keyof ReformTaxes, string> = {
   taxCbs: "CBS",
   taxIbs: "IBS",
   taxIs: "IS",
 };
 
-export const TAX_DESCRIPTIONS: Record<string, string> = {
+const TAX_DESCRIPTIONS: Record<string, string> = {
   taxIcms: "Imposto sobre Circulação de Mercadorias e Serviços",
   taxIss: "Imposto sobre Serviços de Qualquer Natureza",
   taxIpi: "Imposto sobre Produtos Industrializados",
@@ -29,7 +29,7 @@ export const TAX_DESCRIPTIONS: Record<string, string> = {
   taxIs: "Imposto Seletivo — bens e serviços prejudiciais",
 };
 
-export const TAX_BASE_LABELS: Record<string, string> = {
+const TAX_BASE_LABELS: Record<string, string> = {
   taxIcms: "Produtos",
   taxIss: "Serviços",
   taxIpi: "Produtos",
@@ -90,13 +90,14 @@ const DEFAULT_REFORM_RATES = {
 };
 
 function makeTaxItem(enabled: boolean, rate: number): TaxItem {
-  return { enabled, rate, base: 0, amount: 0 };
+  const taxItem = { enabled, rate, base: 0, amount: 0 };
+  return taxItem;
 }
 
-export function createDefaultCurrentTaxes(regime: TaxRegime): CurrentTaxes {
+function createDefaultCurrentTaxes(regime: TaxRegime): CurrentTaxes {
   const rates = DEFAULT_RATES[regime];
   const isActive = regime === "lucro_presumido" || regime === "lucro_real";
-  return {
+  const taxes: CurrentTaxes = {
     taxIcms: makeTaxItem(isActive, rates.taxIcms),
     taxIss: makeTaxItem(false, rates.taxIss),
     taxIpi: makeTaxItem(isActive, rates.taxIpi),
@@ -105,64 +106,85 @@ export function createDefaultCurrentTaxes(regime: TaxRegime): CurrentTaxes {
     taxIrpj: makeTaxItem(isActive, rates.taxIrpj),
     taxCsll: makeTaxItem(isActive, rates.taxCsll),
   };
+  return taxes;
 }
 
-export function createDefaultReformTaxes(): ReformTaxes {
-  return {
+function createDefaultReformTaxes(): ReformTaxes {
+  const taxes: ReformTaxes = {
     taxCbs: makeTaxItem(true, DEFAULT_REFORM_RATES.taxCbs),
     taxIbs: makeTaxItem(true, DEFAULT_REFORM_RATES.taxIbs),
     taxIs: makeTaxItem(false, DEFAULT_REFORM_RATES.taxIs),
   };
+  return taxes;
 }
 
-export function recalcCurrentTaxes(items: InvoiceItem[], taxes: CurrentTaxes): CurrentTaxes {
+function recalcCurrentTaxes(items: InvoiceItem[], taxes: CurrentTaxes): CurrentTaxes {
   const totalProducts = items
-    .filter((i) => i.type === "produto")
-    .reduce((sum, i) => sum + i.totalPrice, 0);
+    .filter((item) => item.type === "produto")
+    .reduce((sum, item) => sum + item.totalPrice, 0);
   const totalServices = items
-    .filter((i) => i.type === "servico")
-    .reduce((sum, i) => sum + i.totalPrice, 0);
+    .filter((item) => item.type === "servico")
+    .reduce((sum, item) => sum + item.totalPrice, 0);
   const total = totalProducts + totalServices;
 
-  const calc = (tax: TaxItem, base: number): TaxItem => ({
+  const computeTaxAmount = (tax: TaxItem, base: number): TaxItem => ({
     ...tax,
     base,
     amount: tax.enabled ? +((base * tax.rate) / 100).toFixed(2) : 0,
   });
 
-  return {
-    taxIcms: calc(taxes.taxIcms, totalProducts),
-    taxIss: calc(taxes.taxIss, totalServices),
-    taxIpi: calc(taxes.taxIpi, totalProducts),
-    taxPis: calc(taxes.taxPis, total),
-    taxCofins: calc(taxes.taxCofins, total),
-    taxIrpj: calc(taxes.taxIrpj, total),
-    taxCsll: calc(taxes.taxCsll, total),
+  const result: CurrentTaxes = {
+    taxIcms: computeTaxAmount(taxes.taxIcms, totalProducts),
+    taxIss: computeTaxAmount(taxes.taxIss, totalServices),
+    taxIpi: computeTaxAmount(taxes.taxIpi, totalProducts),
+    taxPis: computeTaxAmount(taxes.taxPis, total),
+    taxCofins: computeTaxAmount(taxes.taxCofins, total),
+    taxIrpj: computeTaxAmount(taxes.taxIrpj, total),
+    taxCsll: computeTaxAmount(taxes.taxCsll, total),
   };
+  return result;
 }
 
-export function recalcReformTaxes(items: InvoiceItem[], taxes: ReformTaxes): ReformTaxes {
-  const total = items.reduce((sum, i) => sum + i.totalPrice, 0);
-  const calc = (tax: TaxItem, base: number): TaxItem => ({
+function recalcReformTaxes(items: InvoiceItem[], taxes: ReformTaxes): ReformTaxes {
+  const total = items.reduce((sum, item) => sum + item.totalPrice, 0);
+
+  const computeTaxAmount = (tax: TaxItem, base: number): TaxItem => ({
     ...tax,
     base,
     amount: tax.enabled ? +((base * tax.rate) / 100).toFixed(2) : 0,
   });
-  return {
-    taxCbs: calc(taxes.taxCbs, total),
-    taxIbs: calc(taxes.taxIbs, total),
-    taxIs: calc(taxes.taxIs, total),
+
+  const result: ReformTaxes = {
+    taxCbs: computeTaxAmount(taxes.taxCbs, total),
+    taxIbs: computeTaxAmount(taxes.taxIbs, total),
+    taxIs: computeTaxAmount(taxes.taxIs, total),
   };
+  return result;
 }
 
-export function sumCurrentTaxes(taxes: CurrentTaxes): number {
-  return +Object.values(taxes)
-    .reduce((sum, t) => sum + t.amount, 0)
+function sumCurrentTaxes(taxes: CurrentTaxes): number {
+  const total = +Object.values(taxes)
+    .reduce((sum, tax) => sum + tax.amount, 0)
     .toFixed(2);
+  return total;
 }
 
-export function sumReformTaxes(taxes: ReformTaxes): number {
-  return +Object.values(taxes)
-    .reduce((sum, t) => sum + t.amount, 0)
+function sumReformTaxes(taxes: ReformTaxes): number {
+  const total = +Object.values(taxes)
+    .reduce((sum, tax) => sum + tax.amount, 0)
     .toFixed(2);
+  return total;
 }
+
+export {
+  CURRENT_TAX_LABELS,
+  REFORM_TAX_LABELS,
+  TAX_DESCRIPTIONS,
+  TAX_BASE_LABELS,
+  createDefaultCurrentTaxes,
+  createDefaultReformTaxes,
+  recalcCurrentTaxes,
+  recalcReformTaxes,
+  sumCurrentTaxes,
+  sumReformTaxes,
+};

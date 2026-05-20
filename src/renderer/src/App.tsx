@@ -1,20 +1,20 @@
-import { Layout } from "./components/Layout";
-import { NFForm } from "./components/NFForm";
-import { NFList } from "./components/NFList";
-import { NFPrint } from "./components/NFPrint";
-import { useNFStore } from "./store/useNFStore";
+import { Layout } from "./components/app.layout";
+import { InvoiceForm } from "./components/invoice.form/invoice.form";
+import { InvoiceList } from "./components/invoice.list";
+import { InvoicePrint } from "./components/invoice.print";
+import { useInvoiceStore } from "./invoice.store";
 
 export default function App() {
-  const { page } = useNFStore();
+  const { page } = useInvoiceStore();
 
   if (page === "print") {
-    return <NFPrint />;
+    return <InvoicePrint />;
   }
 
   return (
     <Layout>
-      {page === "list" && <NFList />}
-      {page === "form" && <NFForm />}
+      {page === "list" && <InvoiceList />}
+      {page === "form" && <InvoiceForm />}
     </Layout>
   );
 }

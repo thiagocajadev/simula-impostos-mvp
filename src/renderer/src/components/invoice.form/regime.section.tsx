@@ -1,6 +1,6 @@
-import { useNFStore } from "../../store/useNFStore";
-import type { TaxRegime } from "../../types";
-import { REGIME_LABELS } from "../../utils/formatters";
+import { REGIME_LABELS } from "../../invoice.format";
+import { useInvoiceStore } from "../../invoice.store";
+import type { TaxRegime } from "../../invoice.types";
 
 const REGIME_OPTIONS: { value: TaxRegime; description: string }[] = [
   {
@@ -18,8 +18,8 @@ const REGIME_OPTIONS: { value: TaxRegime; description: string }[] = [
   },
 ];
 
-export function RegimeSection() {
-  const { currentInvoice, changeRegime } = useNFStore();
+function RegimeSection() {
+  const { currentInvoice, changeRegime } = useInvoiceStore();
   if (!currentInvoice) {
     return null;
   }
@@ -64,3 +64,5 @@ export function RegimeSection() {
     </section>
   );
 }
+
+export { RegimeSection };

@@ -2,17 +2,15 @@ import { electronAPI } from "@electron-toolkit/preload";
 import { contextBridge, ipcRenderer } from "electron";
 
 const api = {
-  nf: {
-    list: (): Promise<unknown[]> => ipcRenderer.invoke("nf:list"),
-    create: (nf: unknown): Promise<unknown> => ipcRenderer.invoke("nf:create", nf),
-    update: (nf: unknown): Promise<unknown> => ipcRenderer.invoke("nf:update", nf),
-    delete: (id: string): Promise<void> => ipcRenderer.invoke("nf:delete", id),
+  invoice: {
+    list: (): Promise<unknown[]> => ipcRenderer.invoke("invoice:list"),
+    create: (invoice: unknown): Promise<unknown> => ipcRenderer.invoke("invoice:create", invoice),
+    update: (invoice: unknown): Promise<unknown> => ipcRenderer.invoke("invoice:update", invoice),
+    delete: (id: string): Promise<void> => ipcRenderer.invoke("invoice:delete", id),
   },
   print: {
-    toPDF: (
-      nomeArquivo: string,
-    ): Promise<{ success: boolean; filePath?: string; error?: string }> =>
-      ipcRenderer.invoke("print:toPDF", nomeArquivo),
+    toPDF: (fileName: string): Promise<{ success: boolean; filePath?: string; error?: string }> =>
+      ipcRenderer.invoke("print:toPDF", fileName),
   },
 };
 

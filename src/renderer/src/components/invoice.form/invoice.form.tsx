@@ -1,11 +1,11 @@
 import { ArrowLeft, FileText, Save, Send } from "lucide-react";
-import { useNFStore } from "../../store/useNFStore";
-import { fmt, REGIME_LABELS } from "../../utils/formatters";
-import { ImpostosAtuaisSection } from "./ImpostosAtuaisSection";
-import { ImpostosPosReformaSection } from "./ImpostosPosReformaSection";
-import { ItemsSection } from "./ItemsSection";
-import { RegimeSection } from "./RegimeSection";
-import { TotaisSection } from "./TotaisSection";
+import { format, REGIME_LABELS } from "../../invoice.format";
+import { useInvoiceStore } from "../../invoice.store";
+import { CurrentTaxesSection } from "./current-taxes.section";
+import { ItemsSection } from "./items.section";
+import { ReformTaxesSection } from "./reform-taxes.section";
+import { RegimeSection } from "./regime.section";
+import { TotalsSection } from "./totals.section";
 
 function PartyFields({
   title,
@@ -134,8 +134,9 @@ function PartyFields({
   );
 }
 
-export function NFForm() {
-  const { currentInvoice, setPage, saveInvoice, setField, setIssuer, setRecipient } = useNFStore();
+function InvoiceForm() {
+  const { currentInvoice, setPage, saveInvoice, setField, setIssuer, setRecipient } =
+    useInvoiceStore();
 
   if (!currentInvoice) {
     return null;
@@ -156,7 +157,8 @@ export function NFForm() {
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-blue-600" />
               <h1 className="text-xl font-bold text-slate-800">
-                NF-e Simulada — {fmt.invoiceNumber(currentInvoice.number)}/{currentInvoice.series}
+                NF-e Simulada — {format.invoiceNumber(currentInvoice.number)}/
+                {currentInvoice.series}
               </h1>
               <span
                 className={currentInvoice.status === "emitida" ? "badge-emitida" : "badge-rascunho"}
@@ -246,11 +248,11 @@ export function NFForm() {
         <ItemsSection />
 
         <div className="grid grid-cols-2 gap-4">
-          <ImpostosAtuaisSection />
-          <ImpostosPosReformaSection />
+          <CurrentTaxesSection />
+          <ReformTaxesSection />
         </div>
 
-        <TotaisSection />
+        <TotalsSection />
 
         <section className="card p-5">
           <h2 className="section-title mb-3">Informações Adicionais</h2>
@@ -280,3 +282,5 @@ export function NFForm() {
     </div>
   );
 }
+
+export { InvoiceForm };

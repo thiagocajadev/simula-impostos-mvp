@@ -1,8 +1,8 @@
 import { BarChart3, FileText, List, Plus } from "lucide-react";
-import { useNFStore } from "../store/useNFStore";
+import { useInvoiceStore } from "../invoice.store";
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  const { page, setPage, newInvoice } = useNFStore();
+function Layout({ children }: { children: React.ReactNode }) {
+  const { page, setPage, newInvoice } = useInvoiceStore();
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100">
@@ -59,3 +59,5 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+export { Layout };

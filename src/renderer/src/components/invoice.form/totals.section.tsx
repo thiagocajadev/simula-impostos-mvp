@@ -1,9 +1,9 @@
 import { Minus, TrendingDown, TrendingUp } from "lucide-react";
-import { useNFStore } from "../../store/useNFStore";
-import { fmt } from "../../utils/formatters";
+import { format } from "../../invoice.format";
+import { useInvoiceStore } from "../../invoice.store";
 
-export function TotaisSection() {
-  const { currentInvoice } = useNFStore();
+function TotalsSection() {
+  const { currentInvoice } = useInvoiceStore();
   if (!currentInvoice) {
     return null;
   }
@@ -24,29 +24,29 @@ export function TotaisSection() {
       <div className="grid grid-cols-3 gap-4 mb-5">
         <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
           <p className="text-xs text-slate-500 font-medium mb-1">Subtotal (produtos + serviços)</p>
-          <p className="text-xl font-bold text-slate-800">{fmt.currency(subtotal)}</p>
+          <p className="text-xl font-bold text-slate-800">{format.currency(subtotal)}</p>
           <div className="flex gap-3 mt-2 text-xs text-slate-500">
-            <span>Produtos: {fmt.currency(currentInvoice.totalProducts)}</span>
-            <span>Serviços: {fmt.currency(currentInvoice.totalServices)}</span>
+            <span>Produtos: {format.currency(currentInvoice.totalProducts)}</span>
+            <span>Serviços: {format.currency(currentInvoice.totalServices)}</span>
           </div>
         </div>
 
         <div className="bg-orange-50 rounded-xl p-4 border border-orange-200">
           <p className="text-xs text-orange-600 font-medium mb-1">Impostos — Regime Atual</p>
-          <p className="text-xl font-bold text-orange-700">{fmt.currency(currentTaxTotal)}</p>
+          <p className="text-xl font-bold text-orange-700">{format.currency(currentTaxTotal)}</p>
           {subtotal > 0 && (
             <p className="text-xs text-orange-500 mt-2">
-              {fmt.percent((currentTaxTotal / subtotal) * 100)} sobre subtotal
+              {format.percent((currentTaxTotal / subtotal) * 100)} sobre subtotal
             </p>
           )}
         </div>
 
         <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
           <p className="text-xs text-blue-600 font-medium mb-1">Impostos — Pós Reforma</p>
-          <p className="text-xl font-bold text-blue-700">{fmt.currency(reformTaxTotal)}</p>
+          <p className="text-xl font-bold text-blue-700">{format.currency(reformTaxTotal)}</p>
           {subtotal > 0 && (
             <p className="text-xs text-blue-500 mt-2">
-              {fmt.percent((reformTaxTotal / subtotal) * 100)} sobre subtotal
+              {format.percent((reformTaxTotal / subtotal) * 100)} sobre subtotal
             </p>
           )}
         </div>
@@ -60,8 +60,8 @@ export function TotaisSection() {
               {diff === 0
                 ? "Carga tributária equivalente nos dois regimes"
                 : diff < 0
-                  ? `A reforma reduz a carga tributária em ${fmt.currency(Math.abs(diff))}`
-                  : `A reforma aumenta a carga tributária em ${fmt.currency(Math.abs(diff))}`}
+                  ? `A reforma reduz a carga tributária em ${format.currency(Math.abs(diff))}`
+                  : `A reforma aumenta a carga tributária em ${format.currency(Math.abs(diff))}`}
             </p>
             {diff !== 0 && (
               <p className={`text-xs mt-0.5 ${diffColor}`}>
@@ -74,7 +74,7 @@ export function TotaisSection() {
             <p className="text-xs text-slate-500 mb-0.5">Diferença</p>
             <p className={`text-lg font-bold ${diffColor}`}>
               {diff > 0 ? "+" : ""}
-              {fmt.currency(diff)}
+              {format.currency(diff)}
             </p>
           </div>
         </div>
@@ -86,9 +86,11 @@ export function TotaisSection() {
           <p className="text-xs text-slate-400">(subtotal + impostos regime atual)</p>
         </div>
         <p className="text-2xl font-bold text-slate-800">
-          {fmt.currency(currentInvoice.totalInvoice)}
+          {format.currency(currentInvoice.totalInvoice)}
         </p>
       </div>
     </section>
   );
 }
+
+export { TotalsSection };

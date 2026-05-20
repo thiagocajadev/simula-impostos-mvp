@@ -1,8 +1,8 @@
 import { Info, Sparkles } from "lucide-react";
-import { useNFStore } from "../../store/useNFStore";
-import type { ReformTaxes } from "../../types";
-import { fmt } from "../../utils/formatters";
-import { REFORM_TAX_LABELS, TAX_DESCRIPTIONS } from "../../utils/taxCalculator";
+import { format } from "../../invoice.format";
+import { useInvoiceStore } from "../../invoice.store";
+import type { ReformTaxes } from "../../invoice.types";
+import { REFORM_TAX_LABELS, TAX_DESCRIPTIONS } from "../../tax.calculate";
 
 const REFORM_TAX_NOTES: Record<string, string> = {
   taxCbs: "Substitui PIS + COFINS. Alíquota estimada ~8,8%.",
@@ -10,15 +10,15 @@ const REFORM_TAX_NOTES: Record<string, string> = {
   taxIs: "Incide sobre produtos prejudiciais (fumo, bebidas, armas, veículos poluentes).",
 };
 
-export function ImpostosPosReformaSection() {
-  const { currentInvoice, toggleTax, setTaxRate } = useNFStore();
+function ReformTaxesSection() {
+  const { currentInvoice, toggleTax, setTaxRate } = useInvoiceStore();
   if (!currentInvoice) {
     return null;
   }
 
   const taxes = currentInvoice.taxes.reform;
   const keys = Object.keys(REFORM_TAX_LABELS) as (keyof ReformTaxes)[];
-  const total = Object.values(taxes).reduce((sum, t) => sum + t.amount, 0);
+  const total = Object.values(taxes).reduce((sum, tax) => sum + tax.amount, 0);
 
   return (
     <section className="card p-5 border-blue-200 bg-gradient-to-br from-blue-50/40 to-white">
@@ -31,7 +31,7 @@ export function ImpostosPosReformaSection() {
             EC 132/2023
           </span>
         </div>
-        <span className="text-sm font-bold text-blue-600">{fmt.currency(total)}</span>
+        <span className="text-sm font-bold text-blue-600">{format.currency(total)}</span>
       </div>
       <p className="text-xs text-slate-400 mb-4 pl-4">
         Novo sistema IVA dual: CBS (federal) + IBS (estadual/municipal) + IS (seletivo)
@@ -76,7 +76,7 @@ export function ImpostosPosReformaSection() {
               <div className="text-right flex-shrink-0 w-28">
                 <p className="text-xs text-slate-400">Base</p>
                 <p className="text-xs font-mono font-medium text-slate-600">
-                  {fmt.currency(tax.base)}
+                  {format.currency(tax.base)}
                 </p>
               </div>
 
@@ -103,7 +103,7 @@ export function ImpostosPosReformaSection() {
                 <p
                   className={`text-sm font-bold ${tax.enabled ? "text-blue-600" : "text-slate-300"}`}
                 >
-                  {fmt.currency(tax.amount)}
+                  {format.currency(tax.amount)}
                 </p>
               </div>
             </div>
@@ -115,8 +115,10 @@ export function ImpostosPosReformaSection() {
         <span className="text-sm font-semibold text-slate-600">
           Total de Impostos (Pós Reforma)
         </span>
-        <span className="text-lg font-bold text-blue-600">{fmt.currency(total)}</span>
+        <span className="text-lg font-bold text-blue-600">{format.currency(total)}</span>
       </div>
     </section>
   );
 }
+
+export { ReformTaxesSection };

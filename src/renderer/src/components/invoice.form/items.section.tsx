@@ -1,8 +1,8 @@
 import { Package, Plus, Trash2, Wrench } from "lucide-react";
 import { useState } from "react";
-import { useNFStore } from "../../store/useNFStore";
-import type { OperationType } from "../../types";
-import { fmt } from "../../utils/formatters";
+import { format } from "../../invoice.format";
+import { useInvoiceStore } from "../../invoice.store";
+import type { OperationType } from "../../invoice.types";
 
 const CFOP_OPTIONS = [
   { value: "5101", label: "5101 — Venda de produção do estabelecimento" },
@@ -31,8 +31,8 @@ const EMPTY_FORM: ItemForm = {
   type: "produto",
 };
 
-export function ItemsSection() {
-  const { currentInvoice, addItem, removeItem } = useNFStore();
+function ItemsSection() {
+  const { currentInvoice, addItem, removeItem } = useInvoiceStore();
   const [form, setForm] = useState<ItemForm>(EMPTY_FORM);
 
   if (!currentInvoice) {
@@ -235,9 +235,11 @@ export function ItemsSection() {
                 <td className="py-2.5 text-right text-slate-600">
                   {item.quantity} {item.unit}
                 </td>
-                <td className="py-2.5 text-right text-slate-600">{fmt.currency(item.unitPrice)}</td>
+                <td className="py-2.5 text-right text-slate-600">
+                  {format.currency(item.unitPrice)}
+                </td>
                 <td className="py-2.5 text-right font-semibold text-slate-800">
-                  {fmt.currency(item.totalPrice)}
+                  {format.currency(item.totalPrice)}
                 </td>
                 <td className="py-2.5 pl-2">
                   <button
@@ -257,7 +259,7 @@ export function ItemsSection() {
                 SUBTOTAL
               </td>
               <td className="pt-2 text-right font-bold text-slate-800">
-                {fmt.currency(currentInvoice.totalProducts + currentInvoice.totalServices)}
+                {format.currency(currentInvoice.totalProducts + currentInvoice.totalServices)}
               </td>
               <td />
             </tr>
@@ -267,3 +269,5 @@ export function ItemsSection() {
     </section>
   );
 }
+
+export { ItemsSection };

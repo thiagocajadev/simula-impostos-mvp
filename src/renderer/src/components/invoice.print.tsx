@@ -1,9 +1,9 @@
 import { ArrowLeft, Printer } from "lucide-react";
-import React from "react";
-import { useNFStore } from "../store/useNFStore";
-import type { CurrentTaxes, Invoice, ReformTaxes } from "../types";
-import { fmt, REGIME_LABELS } from "../utils/formatters";
-import { CURRENT_TAX_LABELS, REFORM_TAX_LABELS } from "../utils/taxCalculator";
+import { useState } from "react";
+import { format, REGIME_LABELS } from "../invoice.format";
+import { useInvoiceStore } from "../invoice.store";
+import type { CurrentTaxes, Invoice, ReformTaxes } from "../invoice.types";
+import { CURRENT_TAX_LABELS, REFORM_TAX_LABELS } from "../tax.calculate";
 
 function HorizontalRule() {
   return <div style={{ borderTop: "1px solid #333", margin: "2px 0" }} />;
@@ -63,7 +63,7 @@ function TaxCell({
       </div>
       <div style={{ fontSize: 7, color: "#555" }}>{rate}%</div>
       <div style={{ fontSize: 9, fontWeight: 700, color: enabled ? "#333" : "#bbb" }}>
-        {fmt.currency(amount)}
+        {format.currency(amount)}
       </div>
     </td>
   );
@@ -104,10 +104,10 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           </div>
           <div style={{ fontSize: 8, color: "#444" }}>
             {invoice.issuer.city} - {invoice.issuer.state} — CEP{" "}
-            {fmt.zipCode(invoice.issuer.zipCode)}
+            {format.zipCode(invoice.issuer.zipCode)}
           </div>
           <div style={{ fontSize: 8, color: "#444", marginTop: 2 }}>
-            CNPJ: {fmt.cnpj(invoice.issuer.cnpj)} — IE: {invoice.issuer.ie}
+            CNPJ: {format.cnpj(invoice.issuer.cnpj)} — IE: {invoice.issuer.ie}
           </div>
         </div>
 
@@ -150,11 +150,11 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
             NF-e Nº
           </div>
           <div style={{ fontSize: 16, fontWeight: 900, fontFamily: "monospace" }}>
-            {fmt.invoiceNumber(invoice.number)}
+            {format.invoiceNumber(invoice.number)}
           </div>
           <div style={{ fontSize: 8, color: "#555", marginTop: 2 }}>Série: {invoice.series}</div>
           <div style={{ fontSize: 8, color: "#555", marginTop: 4 }}>
-            Emissão: {fmt.date(invoice.issueDate)}
+            Emissão: {format.date(invoice.issueDate)}
           </div>
           <div
             style={{
@@ -207,7 +207,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "0 16px" }}>
           <Field label="Razão Social" value={invoice.recipient.companyName} />
-          <Field label="CNPJ / CPF" value={fmt.cnpj(invoice.recipient.cnpj)} mono />
+          <Field label="CNPJ / CPF" value={format.cnpj(invoice.recipient.cnpj)} mono />
           <Field label="Insc. Estadual" value={invoice.recipient.ie} />
           <Field
             label="Endereço"
@@ -216,7 +216,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           <Field label="Município" value={invoice.recipient.city} />
           <Field
             label="UF / CEP"
-            value={`${invoice.recipient.state} — ${fmt.zipCode(invoice.recipient.zipCode)}`}
+            value={`${invoice.recipient.state} — ${format.zipCode(invoice.recipient.zipCode)}`}
           />
         </div>
       </div>
@@ -296,10 +296,10 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
                     {item.quantity.toLocaleString("pt-BR")}
                   </td>
                   <td style={{ padding: "2px 4px", textAlign: "right" }}>
-                    {fmt.currency(item.unitPrice)}
+                    {format.currency(item.unitPrice)}
                   </td>
                   <td style={{ padding: "2px 4px", textAlign: "right", fontWeight: 700 }}>
-                    {fmt.currency(item.totalPrice)}
+                    {format.currency(item.totalPrice)}
                   </td>
                 </tr>
               ))
@@ -354,7 +354,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
               Total Impostos (Atual)
             </span>
             <span style={{ fontSize: 11, fontWeight: 900, color: "#c2410c" }}>
-              {fmt.currency(invoice.totalCurrentTaxes)}
+              {format.currency(invoice.totalCurrentTaxes)}
             </span>
           </div>
         </div>
@@ -411,7 +411,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
               Total Impostos (Reforma)
             </span>
             <span style={{ fontSize: 11, fontWeight: 900, color: "#1d4ed8" }}>
-              {fmt.currency(invoice.totalReformTaxes)}
+              {format.currency(invoice.totalReformTaxes)}
             </span>
           </div>
         </div>
@@ -432,7 +432,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           <div style={{ fontSize: 7, fontWeight: 700, color: "#555", textTransform: "uppercase" }}>
             Subtotal (Prod + Serv)
           </div>
-          <div style={{ fontSize: 13, fontWeight: 900 }}>{fmt.currency(subtotal)}</div>
+          <div style={{ fontSize: 13, fontWeight: 900 }}>{format.currency(subtotal)}</div>
         </div>
         <div
           style={{
@@ -448,7 +448,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
             Total Impostos (Regime Atual)
           </div>
           <div style={{ fontSize: 13, fontWeight: 900, color: "#c2410c" }}>
-            {fmt.currency(invoice.totalCurrentTaxes)}
+            {format.currency(invoice.totalCurrentTaxes)}
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
@@ -456,7 +456,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
             Valor Total da NF
           </div>
           <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b" }}>
-            {fmt.currency(invoice.totalInvoice)}
+            {format.currency(invoice.totalInvoice)}
           </div>
         </div>
       </div>
@@ -500,16 +500,16 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
   );
 }
 
-export function NFPrint() {
-  const { currentInvoice, setPage, editInvoice } = useNFStore();
-  const [isSaving, setIsSaving] = React.useState(false);
-  const [feedback, setFeedback] = React.useState<string | null>(null);
+function InvoicePrint() {
+  const { currentInvoice, setPage, editInvoice } = useInvoiceStore();
+  const [isSaving, setIsSaving] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   if (!currentInvoice) {
     return null;
   }
 
-  const fileName = `NF-e-Simulada-${fmt.invoiceNumber(currentInvoice.number)}-${currentInvoice.series}`;
+  const fileName = `NF-e-Simulada-${format.invoiceNumber(currentInvoice.number)}-${currentInvoice.series}`;
 
   const savePDF = async () => {
     setIsSaving(true);
@@ -537,7 +537,7 @@ export function NFPrint() {
           </button>
           <span className="text-slate-600">|</span>
           <span className="text-sm text-slate-300">
-            NF-e Simulada — {fmt.invoiceNumber(currentInvoice.number)}/{currentInvoice.series}
+            NF-e Simulada — {format.invoiceNumber(currentInvoice.number)}/{currentInvoice.series}
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -571,3 +571,5 @@ export function NFPrint() {
     </div>
   );
 }
+
+export { InvoicePrint };

@@ -5,9 +5,11 @@ import { app, BrowserWindow, dialog, ipcMain, shell } from "electron";
 
 const getDataFile = (): string => join(app.getPath("userData"), "notas-fiscais.json");
 
-function loadNotas(): unknown[] {
+function loadInvoices(): unknown[] {
   const file = getDataFile();
-  if (!existsSync(file)) return [];
+  if (!existsSync(file)) {
+    return [];
+  }
   try {
     return JSON.parse(readFileSync(file, "utf-8"));
   } catch {
@@ -15,36 +17,41 @@ function loadNotas(): unknown[] {
   }
 }
 
-function saveNotas(notas: unknown[]): void {
-  writeFileSync(getDataFile(), JSON.stringify(notas, null, 2), "utf-8");
+function saveInvoices(invoices: unknown[]): void {
+  writeFileSync(getDataFile(), JSON.stringify(invoices, null, 2), "utf-8");
 }
 
-ipcMain.handle("nf:list", () => loadNotas());
+ipcMain.handle("invoice:list", () => loadInvoices());
 
-ipcMain.handle("nf:create", (_event, nf: { id: string }) => {
-  const notas = loadNotas();
-  notas.push(nf);
-  saveNotas(notas);
-  return nf;
+ipcMain.handle("invoice:create", (_event, invoice: { id: string }) => {
+  const invoices = loadInvoices();
+  invoices.push(invoice);
+  saveInvoices(invoices);
+  return invoice;
 });
 
-ipcMain.handle("nf:update", (_event, nf: { id: string }) => {
-  const notas = loadNotas() as { id: string }[];
-  const idx = notas.findIndex((n) => n.id === nf.id);
-  if (idx >= 0) notas[idx] = nf;
-  else notas.push(nf);
-  saveNotas(notas);
-  return nf;
+ipcMain.handle("invoice:update", (_event, invoice: { id: string }) => {
+  const invoices = loadInvoices() as { id: string }[];
+  const index = invoices.findIndex((entry) => entry.id === invoice.id);
+  if (index >= 0) {
+    invoices[index] = invoice;
+  } else {
+    invoices.push(invoice);
+  }
+  saveInvoices(invoices);
+  return invoice;
 });
 
-ipcMain.handle("nf:delete", (_event, id: string) => {
-  const notas = (loadNotas() as { id: string }[]).filter((n) => n.id !== id);
-  saveNotas(notas);
+ipcMain.handle("invoice:delete", (_event, id: string) => {
+  const invoices = (loadInvoices() as { id: string }[]).filter((entry) => entry.id !== id);
+  saveInvoices(invoices);
 });
 
-ipcMain.handle("print:toPDF", async (event, nomeArquivo: string) => {
+ipcMain.handle("print:toPDF", async (event, fileName: string) => {
   const win = BrowserWindow.fromWebContents(event.sender);
-  if (!win) return { success: false, error: "Janela não encontrada" };
+  if (!win) {
+    return { success: false, error: "Janela não encontrada" };
+  }
 
   try {
     const pdfData = await win.webContents.printToPDF({
@@ -55,11 +62,13 @@ ipcMain.handle("print:toPDF", async (event, nomeArquivo: string) => {
 
     const { canceled, filePath } = await dialog.showSaveDialog(win, {
       title: "Salvar NF-e como PDF",
-      defaultPath: `${nomeArquivo}.pdf`,
+      defaultPath: `${fileName}.pdf`,
       filters: [{ name: "Documento PDF", extensions: ["pdf"] }],
     });
 
-    if (canceled || !filePath) return { success: false };
+    if (canceled || !filePath) {
+      return { success: false };
+    }
 
     writeFileSync(filePath, pdfData);
     return { success: true, filePath };
@@ -100,10 +109,14 @@ function createWindow(): void {
 app.whenReady().then(() => {
   createWindow();
   app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
   });
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
 });

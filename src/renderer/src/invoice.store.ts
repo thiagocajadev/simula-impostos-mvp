@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { Invoice, InvoiceItem, TaxItem, TaxRegime } from "../types";
-import { generateId, nextInvoiceNumber } from "../utils/formatters";
+import { generateId, nextInvoiceNumber } from "./invoice.format";
+import type { Invoice, InvoiceItem, TaxItem, TaxRegime } from "./invoice.types";
 import {
   createDefaultCurrentTaxes,
   createDefaultReformTaxes,
@@ -8,12 +8,12 @@ import {
   recalcReformTaxes,
   sumCurrentTaxes,
   sumReformTaxes,
-} from "../utils/taxCalculator";
+} from "./tax.calculate";
 
-export type Page = "list" | "form" | "print";
+type Page = "list" | "form" | "print";
 
 function defaultIssuer() {
-  return {
+  const issuer = {
     companyName: "Minha Empresa Ltda",
     cnpj: "00000000000191",
     ie: "123456789",
@@ -24,12 +24,13 @@ function defaultIssuer() {
     city: "São Paulo",
     state: "SP",
   };
+  return issuer;
 }
 
 function emptyInvoice(invoices: Invoice[]): Invoice {
   const regime: TaxRegime = "lucro_presumido";
   const now = new Date().toISOString();
-  return {
+  const invoice: Invoice = {
     id: generateId(),
     number: nextInvoiceNumber(invoices),
     series: "001",
@@ -63,20 +64,21 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
     createdAt: now,
     updatedAt: now,
   };
+  return invoice;
 }
 
 function recalcTotals(invoice: Invoice): Invoice {
   const current = recalcCurrentTaxes(invoice.items, invoice.taxes.current);
   const reform = recalcReformTaxes(invoice.items, invoice.taxes.reform);
   const totalProducts = invoice.items
-    .filter((i) => i.type === "produto")
-    .reduce((sum, i) => sum + i.totalPrice, 0);
+    .filter((item) => item.type === "produto")
+    .reduce((sum, item) => sum + item.totalPrice, 0);
   const totalServices = invoice.items
-    .filter((i) => i.type === "servico")
-    .reduce((sum, i) => sum + i.totalPrice, 0);
+    .filter((item) => item.type === "servico")
+    .reduce((sum, item) => sum + item.totalPrice, 0);
   const totalCurrentTaxes = sumCurrentTaxes(current);
   const totalReformTaxes = sumReformTaxes(reform);
-  return {
+  const result: Invoice = {
     ...invoice,
     taxes: { current, reform },
     totalProducts,
@@ -85,6 +87,7 @@ function recalcTotals(invoice: Invoice): Invoice {
     totalReformTaxes,
     totalInvoice: totalProducts + totalServices + totalCurrentTaxes,
   };
+  return result;
 }
 
 interface InvoiceStore {
@@ -114,7 +117,7 @@ interface InvoiceStore {
   setTaxRate: (section: "current" | "reform", key: string, rate: number) => void;
 }
 
-export const useNFStore = create<InvoiceStore>((set, get) => ({
+const useInvoiceStore = create<InvoiceStore>((set, get) => ({
   page: "list",
   invoices: [],
   currentInvoice: null,
@@ -124,7 +127,7 @@ export const useNFStore = create<InvoiceStore>((set, get) => ({
 
   loadInvoices: async () => {
     set({ isLoading: true });
-    const invoices = (await window.api.nf.list()) as Invoice[];
+    const invoices = (await window.api.invoice.list()) as Invoice[];
     set({ invoices, isLoading: false });
   },
 
@@ -143,18 +146,18 @@ export const useNFStore = create<InvoiceStore>((set, get) => ({
       return;
     }
     const updated = recalcTotals({ ...invoice, status, updatedAt: new Date().toISOString() });
-    const exists = get().invoices.some((inv) => inv.id === updated.id);
+    const exists = get().invoices.some((entry) => entry.id === updated.id);
     if (exists) {
-      await window.api.nf.update(updated);
+      await window.api.invoice.update(updated);
     } else {
-      await window.api.nf.create(updated);
+      await window.api.invoice.create(updated);
     }
     await get().loadInvoices();
     set({ currentInvoice: updated, page: status === "emitida" ? "print" : "list" });
   },
 
   deleteInvoice: async (id) => {
-    await window.api.nf.delete(id);
+    await window.api.invoice.delete(id);
     await get().loadInvoices();
   },
 
@@ -240,7 +243,7 @@ export const useNFStore = create<InvoiceStore>((set, get) => ({
       if (!state.currentInvoice) {
         return state;
       }
-      const items = state.currentInvoice.items.filter((i) => i.id !== id);
+      const items = state.currentInvoice.items.filter((item) => item.id !== id);
       return { currentInvoice: recalcTotals({ ...state.currentInvoice, items }) };
     }),
 
@@ -250,8 +253,8 @@ export const useNFStore = create<InvoiceStore>((set, get) => ({
         return state;
       }
       const block = state.currentInvoice.taxes[section] as unknown as Record<string, TaxItem>;
-      const current = block[key];
-      const updated = { ...block, [key]: { ...current, enabled: !current.enabled } };
+      const existing = block[key];
+      const updated = { ...block, [key]: { ...existing, enabled: !existing.enabled } };
       const invoice = recalcTotals({
         ...state.currentInvoice,
         taxes: { ...state.currentInvoice.taxes, [section]: updated },
@@ -273,3 +276,6 @@ export const useNFStore = create<InvoiceStore>((set, get) => ({
       return { currentInvoice: invoice };
     }),
 }));
+
+export type { Page };
+export { useInvoiceStore };

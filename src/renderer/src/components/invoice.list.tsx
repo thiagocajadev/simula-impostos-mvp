@@ -1,10 +1,10 @@
 import { Edit2, Eye, FileText, Plus, Printer, Trash2 } from "lucide-react";
 import { useEffect } from "react";
-import { useNFStore } from "../store/useNFStore";
-import type { Invoice } from "../types";
-import { fmt, REGIME_LABELS, STATUS_LABELS } from "../utils/formatters";
+import { format, REGIME_LABELS, STATUS_LABELS } from "../invoice.format";
+import { useInvoiceStore } from "../invoice.store";
+import type { Invoice } from "../invoice.types";
 
-export function NFList() {
+function InvoiceList() {
   const {
     invoices,
     isLoading,
@@ -13,14 +13,14 @@ export function NFList() {
     editInvoice,
     printInvoice,
     deleteInvoice,
-  } = useNFStore();
+  } = useInvoiceStore();
 
   useEffect(() => {
     loadInvoices();
   }, [loadInvoices]);
 
   const confirmDelete = (invoice: Invoice) => {
-    if (window.confirm(`Excluir NF ${fmt.invoiceNumber(invoice.number)}?`)) {
+    if (window.confirm(`Excluir NF ${format.invoiceNumber(invoice.number)}?`)) {
       deleteInvoice(invoice.id);
     }
   };
@@ -99,9 +99,9 @@ export function NFList() {
               {invoices.map((invoice) => (
                 <tr key={invoice.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3 font-mono font-medium text-blue-600">
-                    {fmt.invoiceNumber(invoice.number)}-{invoice.series}
+                    {format.invoiceNumber(invoice.number)}-{invoice.series}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{fmt.date(invoice.issueDate)}</td>
+                  <td className="px-4 py-3 text-slate-600">{format.date(invoice.issueDate)}</td>
                   <td className="px-4 py-3 text-slate-800 font-medium">
                     {invoice.recipient.companyName || (
                       <span className="text-slate-400 italic">—</span>
@@ -109,13 +109,13 @@ export function NFList() {
                   </td>
                   <td className="px-4 py-3 text-slate-600">{REGIME_LABELS[invoice.taxRegime]}</td>
                   <td className="px-4 py-3 text-right font-semibold text-slate-800">
-                    {fmt.currency(invoice.totalInvoice)}
+                    {format.currency(invoice.totalInvoice)}
                   </td>
                   <td className="px-4 py-3 text-right text-orange-600 font-medium">
-                    {fmt.currency(invoice.totalCurrentTaxes)}
+                    {format.currency(invoice.totalCurrentTaxes)}
                   </td>
                   <td className="px-4 py-3 text-right text-blue-600 font-medium">
-                    {fmt.currency(invoice.totalReformTaxes)}
+                    {format.currency(invoice.totalReformTaxes)}
                   </td>
                   <td className="px-4 py-3">
                     <span
@@ -173,3 +173,5 @@ export function NFList() {
     </div>
   );
 }
+
+export { InvoiceList };

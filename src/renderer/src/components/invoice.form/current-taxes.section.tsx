@@ -1,18 +1,18 @@
 import { Info } from "lucide-react";
-import { useNFStore } from "../../store/useNFStore";
-import type { CurrentTaxes } from "../../types";
-import { fmt } from "../../utils/formatters";
-import { CURRENT_TAX_LABELS, TAX_BASE_LABELS, TAX_DESCRIPTIONS } from "../../utils/taxCalculator";
+import { format } from "../../invoice.format";
+import { useInvoiceStore } from "../../invoice.store";
+import type { CurrentTaxes } from "../../invoice.types";
+import { CURRENT_TAX_LABELS, TAX_BASE_LABELS, TAX_DESCRIPTIONS } from "../../tax.calculate";
 
-export function ImpostosAtuaisSection() {
-  const { currentInvoice, toggleTax, setTaxRate } = useNFStore();
+function CurrentTaxesSection() {
+  const { currentInvoice, toggleTax, setTaxRate } = useInvoiceStore();
   if (!currentInvoice) {
     return null;
   }
 
   const taxes = currentInvoice.taxes.current;
   const keys = Object.keys(CURRENT_TAX_LABELS) as (keyof CurrentTaxes)[];
-  const total = Object.values(taxes).reduce((sum, t) => sum + t.amount, 0);
+  const total = Object.values(taxes).reduce((sum, tax) => sum + tax.amount, 0);
 
   return (
     <section className="card p-5">
@@ -21,7 +21,7 @@ export function ImpostosAtuaisSection() {
           <div className="w-2.5 h-2.5 rounded-full bg-orange-400" />
           <h2 className="section-title text-orange-700">Impostos — Regime Atual</h2>
         </div>
-        <span className="text-sm font-bold text-orange-600">{fmt.currency(total)}</span>
+        <span className="text-sm font-bold text-orange-600">{format.currency(total)}</span>
       </div>
       <p className="text-xs text-slate-400 mb-4 pl-4">
         Sistema vigente: ICMS, ISS, IPI, PIS, COFINS, IRPJ, CSLL
@@ -63,7 +63,7 @@ export function ImpostosAtuaisSection() {
               <div className="text-right flex-shrink-0 w-28">
                 <p className="text-xs text-slate-400">Base</p>
                 <p className="text-xs font-mono font-medium text-slate-600">
-                  {fmt.currency(tax.base)}
+                  {format.currency(tax.base)}
                 </p>
               </div>
 
@@ -90,7 +90,7 @@ export function ImpostosAtuaisSection() {
                 <p
                   className={`text-sm font-bold ${tax.enabled ? "text-orange-600" : "text-slate-300"}`}
                 >
-                  {fmt.currency(tax.amount)}
+                  {format.currency(tax.amount)}
                 </p>
               </div>
             </div>
@@ -102,8 +102,10 @@ export function ImpostosAtuaisSection() {
         <span className="text-sm font-semibold text-slate-600">
           Total de Impostos (Regime Atual)
         </span>
-        <span className="text-lg font-bold text-orange-600">{fmt.currency(total)}</span>
+        <span className="text-lg font-bold text-orange-600">{format.currency(total)}</span>
       </div>
     </section>
   );
 }
+
+export { CurrentTaxesSection };
