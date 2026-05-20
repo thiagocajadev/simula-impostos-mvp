@@ -31,6 +31,11 @@ const EMPTY_FORM: ItemForm = {
   type: "produto",
 };
 
+const DEFAULT_CFOP_BY_TYPE: Record<OperationType, string> = {
+  produto: "5102",
+  servico: "5933",
+};
+
 function ItemsSection() {
   const { currentInvoice, addItem, removeItem } = useInvoiceStore();
   const [form, setForm] = useState<ItemForm>(EMPTY_FORM);
@@ -41,6 +46,9 @@ function ItemsSection() {
 
   const setFormField = (field: keyof ItemForm, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
+
+  const selectItemType = (itemType: OperationType) =>
+    setForm((prev) => ({ ...prev, type: itemType, cfop: DEFAULT_CFOP_BY_TYPE[itemType] }));
 
   const submitItem = () => {
     const quantity = Number.parseFloat(form.quantity) || 0;
@@ -76,7 +84,7 @@ function ItemsSection() {
             <select
               id="item-type"
               value={form.type}
-              onChange={(e) => setFormField("type", e.target.value)}
+              onChange={(e) => selectItemType(e.target.value as OperationType)}
               className="input"
             >
               <option value="produto">Produto</option>

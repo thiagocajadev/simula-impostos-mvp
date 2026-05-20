@@ -4,6 +4,9 @@
 
 ### Fixed
 
+- Fix date off-by-one in `invoice.format.ts`: `new Date("YYYY-MM-DD")` parsed as UTC midnight caused dates to display one day behind in BRT (UTC-3); append `T00:00:00` to force local-time parse.
+- Fix CFOP not resetting when item type changes in `items.section.tsx`: switching tipo from "produto" to "servico" now auto-sets CFOP to 5933 (ISS); switching back sets 5102. Prevents mismatched CFOP/type on item entry.
+
 - Rename all source files to `domain.operation.ext` pattern (EN): `invoice.format.ts`, `tax.calculate.ts`, `invoice.store.ts`, `invoice.types.ts`, `app.layout.tsx`, `invoice.list.tsx`, `invoice.print.tsx`, `components/invoice.form/` with 6 section files. Rename components and store hook to English (`InvoiceForm`, `InvoiceList`, `InvoicePrint`, `useInvoiceStore`, `CurrentTaxesSection`, `ReformTaxesSection`, `TotalsSection`). Rename IPC channels `nf:*` → `invoice:*` and API property `window.api.nf` → `window.api.invoice`. Fix Portuguese variable names (`loadInvoices`, `saveInvoices`, `invoices`, `fileName`). Fix unbraced guards in `main/index.ts`. Replace banned abbreviations (`idx→index`, single-letter callback vars → semantic names). Apply Explaining Returns to all return-with-logic expressions. Apply Revealing Module Pattern (footer exports) to utility and store modules. Migrate `import React` to named `import { useState }`. 0 biome errors, 0 TS errors.
 
 ## [1.0.0] — 2026-05-20

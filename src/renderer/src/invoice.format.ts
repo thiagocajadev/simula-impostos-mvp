@@ -20,7 +20,7 @@ const format = {
     return formatted;
   },
 
-  date: (iso: string): string => new Date(iso).toLocaleDateString("pt-BR"),
+  date: (iso: string): string => new Date(`${iso}T00:00:00`).toLocaleDateString("pt-BR"),
 
   invoiceNumber: (number: string): string => number.padStart(9, "0"),
 };
