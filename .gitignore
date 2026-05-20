@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+out/
+build/
+dist/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Environment — never commit secrets
+.env
+.env.*
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# AI artifacts — session state, not project logic
+.ai/
+tmp/
+temp/
