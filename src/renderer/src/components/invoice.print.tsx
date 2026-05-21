@@ -68,14 +68,14 @@ function TaxCell({
         border: "1px solid #ddd",
         padding: "3px 5px",
         textAlign: "right",
-        opacity: enabled ? 1 : 0.3,
+        background: enabled ? "transparent" : "#f1f5f9",
       }}
     >
-      <div style={{ fontSize: 7, color: "#777", fontWeight: 700, textTransform: "uppercase" }}>
+      <div style={{ fontSize: 7, color: enabled ? "#777" : "#94a3b8", fontWeight: 700, textTransform: "uppercase" }}>
         {name}
       </div>
-      <div style={{ fontSize: 7, color: "#999" }}>{rate}%</div>
-      <div style={{ fontSize: 9, fontWeight: 700, color: enabled ? "#333" : "#bbb" }}>
+      <div style={{ fontSize: 7, color: enabled ? "#999" : "#94a3b8" }}>{rate}%</div>
+      <div style={{ fontSize: 9, fontWeight: 700, color: enabled ? "#333" : "#64748b" }}>
         {format.currency(amount)}
       </div>
     </td>
@@ -573,11 +573,11 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           marginBottom: 8,
         }}
       >
+        {/* Subtotal + Total NF + impacto reforma numa linha só */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr 1fr",
-            borderBottom: "1px solid #e2e8f0",
           }}
         >
           <div style={{ padding: "6px 10px" }}>
@@ -602,16 +602,46 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
               padding: "6px 10px",
               borderLeft: "1px solid #e2e8f0",
               borderRight: "1px solid #e2e8f0",
+              background: subtotal > 0 ? (reformDiff < 0 ? "#f0fdf4" : reformDiff > 0 ? "#fef2f2" : "#f8fafc") : "transparent",
             }}
           >
             <div
-              style={{ fontSize: 7, fontWeight: 700, color: "#c2410c", textTransform: "uppercase" }}
+              style={{
+                fontSize: 7,
+                fontWeight: 700,
+                color: "#555",
+                textTransform: "uppercase",
+              }}
             >
-              Total Impostos (Regime Atual)
+              Impacto — Pós Reforma (EC 132/2023)
             </div>
-            <div style={{ fontSize: 13, fontWeight: 900, color: "#c2410c", marginTop: 2 }}>
-              {format.currency(invoice.totalCurrentTaxes)}
-            </div>
+            {subtotal > 0 ? (
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 900,
+                  marginTop: 2,
+                  color: reformDiff < 0 ? "#15803d" : reformDiff > 0 ? "#dc2626" : "#64748b",
+                }}
+              >
+                {reformDiff === 0
+                  ? "Sem alteração"
+                  : `${reformDiff > 0 ? "↑" : "↓"} ${format.currency(Math.abs(reformDiff))}`}
+              </div>
+            ) : (
+              <div style={{ fontSize: 9, color: "#aaa", marginTop: 4 }}>—</div>
+            )}
+            {subtotal > 0 && invoice.totalCurrentTaxes > 0 && reformDiff !== 0 && (
+              <div
+                style={{
+                  fontSize: 7,
+                  color: reformDiff < 0 ? "#15803d" : "#dc2626",
+                  marginTop: 2,
+                }}
+              >
+                {Math.abs((reformDiff / invoice.totalCurrentTaxes) * 100).toFixed(1)}% em relação ao regime atual
+              </div>
+            )}
           </div>
 
           <div style={{ padding: "6px 10px", textAlign: "right" }}>
@@ -625,49 +655,6 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
             </div>
           </div>
         </div>
-
-        {subtotal > 0 && (
-          <div
-            style={{
-              padding: "4px 10px",
-              background: reformDiff < 0 ? "#f0fdf4" : reformDiff > 0 ? "#fef2f2" : "#f8fafc",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div
-              style={{ fontSize: 7, fontWeight: 700, color: "#555", textTransform: "uppercase" }}
-            >
-              Comparativo — Pós Reforma (EC 132/2023)
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 7, color: "#777" }}>Total Impostos Reforma</div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#2563eb" }}>
-                  {format.currency(invoice.totalReformTaxes)}
-                </div>
-              </div>
-              <div
-                style={{
-                  fontSize: 10,
-                  fontWeight: 900,
-                  color: reformDiff < 0 ? "#15803d" : reformDiff > 0 ? "#dc2626" : "#64748b",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 3,
-                }}
-              >
-                {reformDiff < 0 ? "↓" : reformDiff > 0 ? "↑" : "="}{" "}
-                {format.currency(Math.abs(reformDiff))}
-                <span style={{ fontSize: 7, fontWeight: 400 }}>
-                  {reformDiff !== 0 &&
-                    `(${Math.abs((reformDiff / invoice.totalCurrentTaxes) * 100).toFixed(1)}%)`}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Informações Adicionais */}
@@ -867,9 +854,9 @@ function InvoicePrint() {
         </div>
       </div>
 
-      <div ref={scrollAreaRef} className="flex-1 overflow-auto py-8 px-4 flex justify-center">
-        <div style={{ zoom: zoom / 100, transformOrigin: "top center" }}>
-          <div className="bg-white shadow-2xl" style={{ width: "210mm", minHeight: "297mm" }}>
+      <div ref={scrollAreaRef} className="print-scroll-area flex-1 overflow-auto py-8 px-4 flex justify-center">
+        <div className="print-zoom-wrapper" style={{ zoom: zoom / 100, transformOrigin: "top center" }}>
+          <div className="print-danfe bg-white shadow-2xl" style={{ width: "210mm", minHeight: "297mm" }}>
             <DanfeContent invoice={currentInvoice} />
           </div>
         </div>

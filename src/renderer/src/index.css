@@ -76,6 +76,7 @@
 @media print {
   body {
     margin: 0;
+    padding: 0;
     background: white;
   }
 
@@ -83,8 +84,29 @@
     display: none !important;
   }
 
+  .print-scroll-area {
+    overflow: visible !important;
+    padding: 0 !important;
+    height: auto !important;
+    flex: none !important;
+    display: block !important;
+    background: white !important;
+  }
+
+  .print-zoom-wrapper {
+    zoom: 1 !important;
+    transform: none !important;
+    display: block !important;
+  }
+
+  .print-danfe {
+    box-shadow: none !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+  }
+
   @page {
-    size: A4;
+    size: A4 portrait;
     margin: 0;
   }
 }

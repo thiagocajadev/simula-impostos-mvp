@@ -299,7 +299,7 @@ function PartyFields({
 }
 
 function InvoiceForm() {
-  const { currentInvoice, setPage, saveInvoice, setField, setIssuer, setRecipient } =
+  const { currentInvoice, setPage, saveInvoice, setField, setIssuer, setRecipient, fillDemo } =
     useInvoiceStore();
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(CLOSED_ALL);
 
@@ -417,10 +417,18 @@ function InvoiceForm() {
           </div>
         </div>
 
-        <button type="button" onClick={toggleAll} className="btn-secondary">
-          {allExpanded ? <ChevronsUp size={15} /> : <ChevronsDown size={15} />}
-          {allExpanded ? "Recolher todos" : "Expandir todos"}
-        </button>
+        <div className="flex items-center gap-2">
+          {currentInvoice.status === "draft" && (
+            <button type="button" onClick={fillDemo} className="btn-secondary">
+              <Sparkles size={15} />
+              Gerar demonstração
+            </button>
+          )}
+          <button type="button" onClick={toggleAll} className="btn-secondary">
+            {allExpanded ? <ChevronsUp size={15} /> : <ChevronsDown size={15} />}
+            {allExpanded ? "Recolher todos" : "Expandir todos"}
+          </button>
+        </div>
       </div>
 
       <div className="space-y-3">

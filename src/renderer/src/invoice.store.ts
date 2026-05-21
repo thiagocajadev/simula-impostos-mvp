@@ -30,60 +30,25 @@ function defaultIssuer() {
 function emptyInvoice(invoices: Invoice[]): Invoice {
   const regime: TaxRegime = "simples_nacional";
   const now = new Date().toISOString();
-  const items: InvoiceItem[] = [
-    {
-      id: generateId(),
-      description: 'Notebook Dell Inspiron 15"',
-      ncm: "84713012",
-      cfop: "5102",
-      unit: "UN",
-      quantity: 5,
-      unitPrice: 3500.0,
-      totalPrice: 17500.0,
-      type: "product",
-    },
-    {
-      id: generateId(),
-      description: "Mouse Óptico sem Fio Logitech MX Master 3",
-      ncm: "84716054",
-      cfop: "5102",
-      unit: "UN",
-      quantity: 10,
-      unitPrice: 250.0,
-      totalPrice: 2500.0,
-      type: "product",
-    },
-    {
-      id: generateId(),
-      description: "Contrato de Suporte Técnico Mensal",
-      ncm: "",
-      cfop: "5933",
-      unit: "MÊS",
-      quantity: 1,
-      unitPrice: 2000.0,
-      totalPrice: 2000.0,
-      type: "service",
-    },
-  ];
   const invoice: Invoice = {
     id: generateId(),
     number: nextInvoiceNumber(invoices),
     series: "001",
     issueDate: now.slice(0, 10),
-    operationNature: "Venda de produtos de informática e prestação de serviços",
+    operationNature: "",
     issuer: defaultIssuer(),
     recipient: {
-      companyName: "Tech Solutions Comércio e Serviços Ltda",
-      taxId: "11222333000181",
-      stateRegistration: "987654321",
-      zipCode: "04571010",
-      address: "Av. das Nações Unidas",
-      number: "12901",
-      neighborhood: "Brooklin Paulista",
-      city: "São Paulo",
-      state: "SP",
+      companyName: "",
+      taxId: "",
+      stateRegistration: "",
+      zipCode: "",
+      address: "",
+      number: "",
+      neighborhood: "",
+      city: "",
+      state: "",
     },
-    items,
+    items: [],
     taxRegime: regime,
     taxes: {
       current: createDefaultCurrentTaxes(regime),
@@ -94,8 +59,7 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
     totalCurrentTaxes: 0,
     totalReformTaxes: 0,
     totalInvoice: 0,
-    additionalInfo:
-      "NF de demonstração — dados fictícios para fins educativos. Cálculos estimados com alíquotas da Reforma Tributária (EC 132/2023).",
+    additionalInfo: "",
     status: "draft",
     createdAt: now,
     updatedAt: now,
@@ -140,6 +104,7 @@ interface InvoiceStore {
   saveInvoice: (status: "draft" | "issued") => Promise<void>;
   deleteInvoice: (id: string) => Promise<void>;
 
+  fillDemo: () => void;
   setIssuer: (field: string, value: string) => void;
   setRecipient: (field: string, value: string) => void;
   setField: (field: keyof Invoice, value: unknown) => void;
@@ -196,6 +161,65 @@ const useInvoiceStore = create<InvoiceStore>((set, get) => ({
     await window.api.invoice.delete(id);
     await get().loadInvoices();
   },
+
+  fillDemo: () =>
+    set((state) => {
+      if (!state.currentInvoice) return state;
+      const demoItems: InvoiceItem[] = [
+        {
+          id: generateId(),
+          description: 'Notebook Dell Inspiron 15"',
+          ncm: "84713012",
+          cfop: "5102",
+          unit: "UN",
+          quantity: 5,
+          unitPrice: 3500.0,
+          totalPrice: 17500.0,
+          type: "product",
+        },
+        {
+          id: generateId(),
+          description: "Mouse Óptico sem Fio Logitech MX Master 3",
+          ncm: "84716054",
+          cfop: "5102",
+          unit: "UN",
+          quantity: 10,
+          unitPrice: 250.0,
+          totalPrice: 2500.0,
+          type: "product",
+        },
+        {
+          id: generateId(),
+          description: "Contrato de Suporte Técnico Mensal",
+          ncm: "",
+          cfop: "5933",
+          unit: "MÊS",
+          quantity: 1,
+          unitPrice: 2000.0,
+          totalPrice: 2000.0,
+          type: "service",
+        },
+      ];
+      const updated = recalcTotals({
+        ...state.currentInvoice,
+        operationNature: "Venda de produtos de informática e prestação de serviços",
+        recipient: {
+          companyName: "Tech Solutions Comércio e Serviços Ltda",
+          taxId: "11222333000181",
+          stateRegistration: "987654321",
+          zipCode: "04571010",
+          address: "Av. das Nações Unidas",
+          number: "12901",
+          neighborhood: "Brooklin Paulista",
+          city: "São Paulo",
+          state: "SP",
+        },
+        items: demoItems,
+        additionalInfo:
+          "NF de demonstração — dados fictícios para fins educativos. Cálculos estimados com alíquotas da Reforma Tributária (EC 132/2023).",
+      });
+      return { currentInvoice: updated };
+    }),
 
   setIssuer: (field, value) =>
     set((state) =>

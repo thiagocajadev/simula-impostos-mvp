@@ -1,4 +1,4 @@
-import { access, readFile, writeFile } from "node:fs/promises";
+import { access, readFile, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { app } from "electron";
 import { buildSeedInvoices } from "./invoice.seed";
@@ -96,6 +96,15 @@ async function writeInvoices(invoices: unknown[]): Promise<void> {
   await writeFile(path, JSON.stringify(invoices, null, 2), "utf-8");
 }
 
+async function deleteDataFile(): Promise<void> {
+  const path = resolveDataPath();
+  try {
+    await unlink(path);
+  } catch {
+    // file already gone
+  }
+}
+
 async function loadOrSeedInvoices(): Promise<unknown[]> {
   const path = resolveDataPath();
   const exists = await fileExists(path);
@@ -106,8 +115,7 @@ async function loadOrSeedInvoices(): Promise<unknown[]> {
     return seeded;
   }
 
-  const invoices = await readInvoices();
-  return invoices;
+  return readInvoices();
 }
 
-export { readInvoices, writeInvoices, loadOrSeedInvoices };
+export { readInvoices, writeInvoices, deleteDataFile, loadOrSeedInvoices };
