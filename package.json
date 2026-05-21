@@ -1,6 +1,6 @@
 {
   "name": "simula-impostos-mvp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simulador de Impostos Brasileiros — Regime Atual vs Reforma Tributária",
   "homepage": "https://github.com/thiagocajaiba/simula-impostos-mvp",
   "author": {
@@ -62,11 +62,16 @@
       }
     ],
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "resources/icon.ico"
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "icon": "icons",
       "category": "Finance"
     }
