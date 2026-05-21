@@ -115,15 +115,15 @@ Termos usados no código-fonte e seus equivalentes na interface do usuário.
 | `unitPrice`        | Valor Unitário          |
 | `quantity`         | Quantidade              |
 | `unit`             | Unidade (UN)            |
-| `produto`          | Produto                 |
-| `servico`          | Serviço                 |
-| `status: rascunho` | Rascunho                |
-| `status: emitida`  | Emitida                 |
+| `product`          | Produto                 |
+| `service`          | Serviço                 |
+| `status: draft`    | Rascunho                |
+| `status: issued`   | Emitida                 |
 | `additionalInfo`   | Informações Adicionais  |
 | `print` / `toPDF`  | Salvar como PDF / DANFE |
 | `companyName`      | Razão Social            |
-| `cnpj`             | CNPJ / CPF              |
-| `ie`               | Inscrição Estadual      |
+| `taxId`            | CNPJ / CPF              |
+| `stateRegistration`| Inscrição Estadual      |
 | `zipCode`          | CEP                     |
 | `neighborhood`     | Bairro                  |
 | `city`             | Município               |

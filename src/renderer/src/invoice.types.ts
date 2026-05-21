@@ -1,8 +1,8 @@
 export type TaxRegime = "simples_nacional" | "mei" | "lucro_presumido" | "lucro_real";
 
-export type OperationType = "produto" | "servico";
+export type OperationType = "product" | "service";
 
-export type InvoiceStatus = "rascunho" | "emitida";
+export type InvoiceStatus = "draft" | "issued";
 
 export interface TaxItem {
   enabled: boolean;
@@ -41,8 +41,8 @@ export interface InvoiceItem {
 
 export interface Party {
   companyName: string;
-  cnpj: string;
-  ie: string;
+  taxId: string;
+  stateRegistration: string;
   zipCode: string;
   address: string;
   number: string;

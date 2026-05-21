@@ -183,22 +183,22 @@ function PartyFields({
           />
         </div>
         <div className="col-span-3">
-          <label htmlFor={`${id}-cnpj`} className="label">
+          <label htmlFor={`${id}-taxId`} className="label">
             CNPJ / CPF
           </label>
           <input
-            id={`${id}-cnpj`}
-            className={`input ${errorRing("cnpj")}`}
-            value={maskCnpjCpf(party.cnpj)}
-            onChange={(e) => onChange("cnpj", maskCnpjCpf(e.target.value))}
+            id={`${id}-taxId`}
+            className={`input ${errorRing("taxId")}`}
+            value={maskCnpjCpf(party.taxId)}
+            onChange={(e) => onChange("taxId", maskCnpjCpf(e.target.value))}
             onBlur={(e) => {
               const error = validateDocument(e.target.value);
-              setFieldErrors((prev) => ({ ...prev, cnpj: error }));
+              setFieldErrors((prev) => ({ ...prev, taxId: error }));
             }}
             placeholder="00.000.000/0001-00"
             maxLength={18}
           />
-          {fieldErrors.cnpj && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.cnpj}</p>}
+          {fieldErrors.taxId && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.taxId}</p>}
         </div>
         <div className="col-span-3">
           <label htmlFor={`${id}-ie`} className="label">
@@ -207,8 +207,8 @@ function PartyFields({
           <input
             id={`${id}-ie`}
             className="input"
-            value={party.ie}
-            onChange={(e) => onChange("ie", e.target.value)}
+            value={party.stateRegistration}
+            onChange={(e) => onChange("stateRegistration", e.target.value)}
             placeholder="IE ou ISENTO"
           />
         </div>
@@ -403,9 +403,9 @@ function InvoiceForm() {
                 {currentInvoice.series}
               </h1>
               <span
-                className={currentInvoice.status === "emitida" ? "badge-emitida" : "badge-rascunho"}
+                className={currentInvoice.status === "issued" ? "badge-emitida" : "badge-rascunho"}
               >
-                {currentInvoice.status === "emitida" ? "Emitida" : "Rascunho"}
+                {currentInvoice.status === "issued" ? "Emitida" : "Rascunho"}
               </span>
             </div>
             <p className="text-xs text-slate-400 ml-7">
@@ -575,11 +575,11 @@ function InvoiceForm() {
             <ArrowLeft size={15} />
             Cancelar
           </button>
-          <button type="button" onClick={() => saveInvoice("rascunho")} className="btn-secondary">
+          <button type="button" onClick={() => saveInvoice("draft")} className="btn-secondary">
             <Save size={15} />
             Salvar Rascunho
           </button>
-          <button type="button" onClick={() => saveInvoice("emitida")} className="btn-success">
+          <button type="button" onClick={() => saveInvoice("issued")} className="btn-success">
             <Send size={15} />
             Emitir Nota Fiscal
           </button>

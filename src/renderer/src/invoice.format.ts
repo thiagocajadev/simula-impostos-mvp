@@ -8,7 +8,7 @@ const format = {
       maximumFractionDigits: 4,
     }).format(value)}%`,
 
-  cnpj: (value: string): string => {
+  taxId: (value: string): string => {
     const digits = value.replace(/\D/g, "").slice(0, 14);
     const formatted = digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
     return formatted;
@@ -33,8 +33,8 @@ const REGIME_LABELS: Record<string, string> = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  rascunho: "Rascunho",
-  emitida: "Emitida",
+  draft: "Rascunho",
+  issued: "Emitida",
 };
 
 export { format, REGIME_LABELS, STATUS_LABELS };

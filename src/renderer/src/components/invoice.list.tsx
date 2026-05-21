@@ -102,7 +102,7 @@ function InvoiceList() {
                 <tr key={invoice.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 justify-center">
-                      {invoice.status === "rascunho" && (
+                      {invoice.status === "draft" && (
                         <button
                           type="button"
                           onClick={() => editInvoice(invoice)}
@@ -151,7 +151,7 @@ function InvoiceList() {
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={invoice.status === "emitida" ? "badge-emitida" : "badge-rascunho"}
+                      className={invoice.status === "issued" ? "badge-emitida" : "badge-rascunho"}
                     >
                       {STATUS_LABELS[invoice.status]}
                     </span>

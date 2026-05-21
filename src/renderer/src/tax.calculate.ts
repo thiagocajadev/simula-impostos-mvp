@@ -120,10 +120,10 @@ function createDefaultReformTaxes(): ReformTaxes {
 
 function recalcCurrentTaxes(items: InvoiceItem[], taxes: CurrentTaxes): CurrentTaxes {
   const totalProducts = items
-    .filter((item) => item.type === "produto")
+    .filter((item) => item.type === "product")
     .reduce((sum, item) => sum + item.totalPrice, 0);
   const totalServices = items
-    .filter((item) => item.type === "servico")
+    .filter((item) => item.type === "service")
     .reduce((sum, item) => sum + item.totalPrice, 0);
   const total = totalProducts + totalServices;
 

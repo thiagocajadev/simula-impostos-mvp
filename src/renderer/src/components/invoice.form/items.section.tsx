@@ -28,12 +28,12 @@ const EMPTY_FORM: ItemForm = {
   unit: "UN",
   quantity: "1",
   unitPrice: "",
-  type: "produto",
+  type: "product",
 };
 
 const DEFAULT_CFOP_BY_TYPE: Record<OperationType, string> = {
-  produto: "5102",
-  servico: "5933",
+  product: "5102",
+  service: "5933",
 };
 
 function ItemsSection() {
@@ -85,8 +85,8 @@ function ItemsSection() {
               onChange={(e) => selectItemType(e.target.value as OperationType)}
               className="input"
             >
-              <option value="produto">Produto</option>
-              <option value="servico">Serviço</option>
+              <option value="product">Produto</option>
+              <option value="service">Serviço</option>
             </select>
           </div>
 
@@ -226,13 +226,13 @@ function ItemsSection() {
                 <td className="py-2.5 pr-3">
                   <span
                     className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${
-                      item.type === "produto"
+                      item.type === "product"
                         ? "bg-blue-100 text-blue-700"
                         : "bg-purple-100 text-purple-700"
                     }`}
                   >
-                    {item.type === "produto" ? <Package size={10} /> : <Wrench size={10} />}
-                    {item.type === "produto" ? "Prod" : "Serv"}
+                    {item.type === "product" ? <Package size={10} /> : <Wrench size={10} />}
+                    {item.type === "product" ? "Prod" : "Serv"}
                   </span>
                 </td>
                 <td className="py-2.5 text-slate-800 font-medium">{item.description}</td>

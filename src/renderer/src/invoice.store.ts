@@ -15,8 +15,8 @@ type Page = "list" | "form" | "print";
 function defaultIssuer() {
   const issuer = {
     companyName: "Minha Empresa Ltda",
-    cnpj: "00000000000191",
-    ie: "123456789",
+    taxId: "00000000000191",
+    stateRegistration: "123456789",
     zipCode: "01310100",
     address: "Av. Paulista",
     number: "1000",
@@ -40,7 +40,7 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
       quantity: 5,
       unitPrice: 3500.0,
       totalPrice: 17500.0,
-      type: "produto",
+      type: "product",
     },
     {
       id: generateId(),
@@ -51,7 +51,7 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
       quantity: 10,
       unitPrice: 250.0,
       totalPrice: 2500.0,
-      type: "produto",
+      type: "product",
     },
     {
       id: generateId(),
@@ -62,7 +62,7 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
       quantity: 1,
       unitPrice: 2000.0,
       totalPrice: 2000.0,
-      type: "servico",
+      type: "service",
     },
   ];
   const invoice: Invoice = {
@@ -74,8 +74,8 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
     issuer: defaultIssuer(),
     recipient: {
       companyName: "Tech Solutions Comércio e Serviços Ltda",
-      cnpj: "11222333000181",
-      ie: "987654321",
+      taxId: "11222333000181",
+      stateRegistration: "987654321",
       zipCode: "04571010",
       address: "Av. das Nações Unidas",
       number: "12901",
@@ -96,7 +96,7 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
     totalInvoice: 0,
     additionalInfo:
       "NF de demonstração — dados fictícios para fins educativos. Cálculos estimados com alíquotas da Reforma Tributária (EC 132/2023).",
-    status: "rascunho",
+    status: "draft",
     createdAt: now,
     updatedAt: now,
   };
@@ -107,10 +107,10 @@ function recalcTotals(invoice: Invoice): Invoice {
   const current = recalcCurrentTaxes(invoice.items, invoice.taxes.current);
   const reform = recalcReformTaxes(invoice.items, invoice.taxes.reform);
   const totalProducts = invoice.items
-    .filter((item) => item.type === "produto")
+    .filter((item) => item.type === "product")
     .reduce((sum, item) => sum + item.totalPrice, 0);
   const totalServices = invoice.items
-    .filter((item) => item.type === "servico")
+    .filter((item) => item.type === "service")
     .reduce((sum, item) => sum + item.totalPrice, 0);
   const totalCurrentTaxes = sumCurrentTaxes(current);
   const totalReformTaxes = sumReformTaxes(reform);
@@ -137,7 +137,7 @@ interface InvoiceStore {
   newInvoice: () => void;
   editInvoice: (invoice: Invoice) => void;
   printInvoice: (invoice: Invoice) => void;
-  saveInvoice: (status: "rascunho" | "emitida") => Promise<void>;
+  saveInvoice: (status: "draft" | "issued") => Promise<void>;
   deleteInvoice: (id: string) => Promise<void>;
 
   setIssuer: (field: string, value: string) => void;
@@ -189,7 +189,7 @@ const useInvoiceStore = create<InvoiceStore>((set, get) => ({
       await window.api.invoice.create(updated);
     }
     await get().loadInvoices();
-    set({ currentInvoice: updated, page: status === "emitida" ? "print" : "list" });
+    set({ currentInvoice: updated, page: status === "issued" ? "print" : "list" });
   },
 
   deleteInvoice: async (id) => {

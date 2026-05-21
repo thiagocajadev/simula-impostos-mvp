@@ -8,12 +8,12 @@ import { CURRENT_TAX_LABELS, REFORM_TAX_LABELS } from "../tax.calculate";
 const ZOOM_PRESETS = [50, 75, 90, 100, 125, 150];
 
 function buildAccessKey(invoice: Invoice): string {
-  const cnpj = invoice.issuer.cnpj.replace(/\D/g, "").padStart(14, "0").slice(0, 14);
+  const taxId = invoice.issuer.taxId.replace(/\D/g, "").padStart(14, "0").slice(0, 14);
   const year = invoice.issueDate.slice(2, 4);
   const month = invoice.issueDate.slice(5, 7);
   const series = invoice.series.replace(/\D/g, "").padStart(3, "0").slice(0, 3);
   const number = invoice.number.replace(/\D/g, "").padStart(9, "0").slice(0, 9);
-  const raw = `35${year}${month}${cnpj}55${series}${number}100000010`;
+  const raw = `35${year}${month}${taxId}55${series}${number}100000010`;
   return raw.padEnd(44, "0").slice(0, 44);
 }
 
@@ -181,7 +181,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
                 CNPJ
               </div>
               <div style={{ fontSize: 8, fontFamily: "monospace" }}>
-                {format.cnpj(invoice.issuer.cnpj)}
+                {format.taxId(invoice.issuer.taxId)}
               </div>
             </div>
             <div>
@@ -190,7 +190,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
               >
                 Insc. Estadual
               </div>
-              <div style={{ fontSize: 8 }}>{invoice.issuer.ie || "—"}</div>
+              <div style={{ fontSize: 8 }}>{invoice.issuer.stateRegistration || "—"}</div>
             </div>
             <div style={{ gridColumn: "1 / -1" }}>
               <div
@@ -267,14 +267,14 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           <div
             style={{
               padding: "2px 4px",
-              background: invoice.status === "emitida" ? "#d1fae5" : "#fef3c7",
+              background: invoice.status === "issued" ? "#d1fae5" : "#fef3c7",
               borderRadius: 3,
               fontSize: 7,
               fontWeight: 700,
-              color: invoice.status === "emitida" ? "#065f46" : "#92400e",
+              color: invoice.status === "issued" ? "#065f46" : "#92400e",
             }}
           >
-            {invoice.status === "emitida" ? "● EMITIDA" : "● RASCUNHO"}
+            {invoice.status === "issued" ? "● EMITIDA" : "● RASCUNHO"}
           </div>
         </div>
       </div>
@@ -342,8 +342,8 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
         <div style={{ padding: "4px 8px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "0 16px" }}>
             <Field label="Razão Social" value={invoice.recipient.companyName} />
-            <Field label="CNPJ / CPF" value={format.cnpj(invoice.recipient.cnpj)} mono />
-            <Field label="Insc. Estadual" value={invoice.recipient.ie} />
+            <Field label="CNPJ / CPF" value={format.taxId(invoice.recipient.taxId)} mono />
+            <Field label="Insc. Estadual" value={invoice.recipient.stateRegistration} />
             <Field
               label="Endereço"
               value={`${invoice.recipient.address}${invoice.recipient.number ? `, ${invoice.recipient.number}` : ""}`}
@@ -411,10 +411,10 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
                       textAlign: "right",
                       fontFamily: "monospace",
                       fontSize: 7,
-                      color: item.type === "produto" ? "#1d4ed8" : "#7c3aed",
+                      color: item.type === "product" ? "#1d4ed8" : "#7c3aed",
                     }}
                   >
-                    {item.type === "produto" ? "PROD" : "SERV"}
+                    {item.type === "product" ? "PROD" : "SERV"}
                   </td>
                   <td style={{ padding: "2px 4px", textAlign: "left", fontWeight: 600 }}>
                     {item.description}
@@ -846,7 +846,7 @@ function InvoicePrint() {
           </div>
 
           {feedback && <span className="text-xs text-slate-300 max-w-xs truncate">{feedback}</span>}
-          {currentInvoice.status === "rascunho" && (
+          {currentInvoice.status === "draft" && (
             <button
               type="button"
               onClick={() => editInvoice(currentInvoice)}
