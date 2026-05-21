@@ -14,15 +14,15 @@ type Page = "list" | "form" | "print";
 
 function defaultIssuer() {
   const issuer = {
-    companyName: "Minha Empresa Ltda",
-    taxId: "00000000000191",
-    stateRegistration: "123456789",
-    zipCode: "01310100",
-    address: "Av. Paulista",
-    number: "1000",
-    neighborhood: "Bela Vista",
-    city: "São Paulo",
-    state: "SP",
+    companyName: "Empresa Fictícia Ltda",
+    taxId: "00000000000000",
+    stateRegistration: "000000000",
+    zipCode: "00000000",
+    address: "Rua Fictícia",
+    number: "0",
+    neighborhood: "Bairro Fictício",
+    city: "Cidade Fictícia",
+    state: "XX",
   };
   return issuer;
 }
@@ -204,15 +204,15 @@ const useInvoiceStore = create<InvoiceStore>((set, get) => ({
         ...state.currentInvoice,
         operationNature: "Venda de produtos de informática e prestação de serviços",
         recipient: {
-          companyName: "Tech Solutions Comércio e Serviços Ltda",
-          taxId: "11222333000181",
-          stateRegistration: "987654321",
-          zipCode: "04571010",
-          address: "Av. das Nações Unidas",
-          number: "12901",
-          neighborhood: "Brooklin Paulista",
-          city: "São Paulo",
-          state: "SP",
+          companyName: "Tech Fictício Comércio e Serviços Ltda",
+          taxId: "11111111000111",
+          stateRegistration: "111111111",
+          zipCode: "00000000",
+          address: "Rua Fictícia",
+          number: "100",
+          neighborhood: "Bairro Fictício",
+          city: "Cidade Fictícia",
+          state: "XX",
         },
         items: demoItems,
         additionalInfo:
