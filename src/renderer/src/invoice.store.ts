@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { generateId, nextInvoiceNumber } from "./invoice.format";
+import { generateId, nextInvoiceNumber } from "./invoice.compute";
 import type { Invoice, InvoiceItem, TaxItem, TaxRegime } from "./invoice.types";
 import {
   createDefaultCurrentTaxes,

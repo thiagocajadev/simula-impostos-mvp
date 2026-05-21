@@ -2,6 +2,12 @@
 
 ## [Unreleased] — 2026-05-21
 
+### Fixed
+
+- Refactor `src/main/index.ts` into semantic modules: extract seed data to `invoice.seed.ts`, async persistence layer (read/write/loadOrSeed) to `invoice.persist.ts`, IPC handlers to `invoice.ipc.ts` and `print.ipc.ts`, window factory to `window.ts`; entry point reduced to 21 lines. Rename `getDataFile()` → `resolveDataPath()` (banned verb `get`). Convert sync file I/O (`readFileSync`/`writeFileSync`) to async (`readFile`/`writeFile`). Fix CQS violation in `loadInvoices` by splitting into `readInvoices()` (query) and `loadOrSeedInvoices()` (orchestrator). Move `generateId()` and `nextInvoiceNumber()` from `invoice.format.ts` to `invoice.compute.ts` (SRP); update import in `invoice.store.ts`.
+
+## [Unreleased] — 2026-05-21
+
 ### Added
 
 - Add collapsible accordion sections to the NF form: all 7 sections (Regime Tributário, Dados da NF, Itens, Impostos Atual, Impostos Reforma, Resumo, Informações Adicionais) are individually expandable with contextual summary chips in the collapsed header. A single "Expandir todos / Recolher todos" button controls all at once. Regime Tributário is the first section; all start collapsed. Accordion state lives in `InvoiceForm` as a `Record<SectionKey, boolean>`, enabling bulk toggle without `useEffect`. Duplicate action buttons removed from the top toolbar.

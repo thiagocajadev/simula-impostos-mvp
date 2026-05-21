@@ -22,7 +22,7 @@ const format = {
 
   date: (iso: string): string => new Date(`${iso}T00:00:00`).toLocaleDateString("pt-BR"),
 
-  invoiceNumber: (number: string): string => number.padStart(9, "0"),
+  invoiceNumber: (number: string): string => String(number ?? "").padStart(9, "0"),
 };
 
 const REGIME_LABELS: Record<string, string> = {
@@ -37,18 +37,4 @@ const STATUS_LABELS: Record<string, string> = {
   emitida: "Emitida",
 };
 
-function generateId(): string {
-  const id = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
-  return id;
-}
-
-function nextInvoiceNumber(invoices: { number: string }[]): string {
-  const maximum = invoices.reduce(
-    (max, invoice) => Math.max(max, Number.parseInt(invoice.number, 10) || 0),
-    0,
-  );
-  const next = String(maximum + 1);
-  return next;
-}
-
-export { format, REGIME_LABELS, STATUS_LABELS, generateId, nextInvoiceNumber };
+export { format, REGIME_LABELS, STATUS_LABELS };
