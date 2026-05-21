@@ -18,9 +18,7 @@ function TotalsSection() {
   const diffColor = diff < 0 ? "text-emerald-600" : diff > 0 ? "text-red-500" : "text-slate-500";
 
   return (
-    <section className="card p-5">
-      <h2 className="section-title mb-4">Resumo e Comparativo</h2>
-
+    <div>
       <div className="grid grid-cols-3 gap-4 mb-5">
         <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
           <p className="text-xs text-slate-500 font-medium mb-1">Subtotal (produtos + serviços)</p>
@@ -89,7 +87,7 @@ function TotalsSection() {
           {format.currency(currentInvoice.totalInvoice)}
         </p>
       </div>
-    </section>
+    </div>
   );
 }
 

@@ -15,15 +15,8 @@ function CurrentTaxesSection() {
   const total = Object.values(taxes).reduce((sum, tax) => sum + tax.amount, 0);
 
   return (
-    <section className="card p-5">
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-orange-400" />
-          <h2 className="section-title text-orange-700">Impostos — Regime Atual</h2>
-        </div>
-        <span className="text-sm font-bold text-orange-600">{format.currency(total)}</span>
-      </div>
-      <p className="text-xs text-slate-400 mb-4 pl-4">
+    <div>
+      <p className="text-xs text-slate-400 mb-4">
         Sistema vigente: ICMS, ISS, IPI, PIS, COFINS, IRPJ, CSLL
       </p>
 
@@ -99,12 +92,10 @@ function CurrentTaxesSection() {
       </div>
 
       <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
-        <span className="text-sm font-semibold text-slate-600">
-          Total de Impostos (Regime Atual)
-        </span>
+        <span className="text-sm font-semibold text-slate-600">Total de Impostos</span>
         <span className="text-lg font-bold text-orange-600">{format.currency(total)}</span>
       </div>
-    </section>
+    </div>
   );
 }
 

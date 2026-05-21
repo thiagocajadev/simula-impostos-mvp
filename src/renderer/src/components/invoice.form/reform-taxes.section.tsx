@@ -21,21 +21,16 @@ function ReformTaxesSection() {
   const total = Object.values(taxes).reduce((sum, tax) => sum + tax.amount, 0);
 
   return (
-    <section className="card p-5 border-blue-200 bg-gradient-to-br from-blue-50/40 to-white">
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-          <h2 className="section-title text-blue-700">Impostos — Pós Reforma Tributária</h2>
-          <span className="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-medium">
-            <Sparkles size={10} />
-            EC 132/2023
-          </span>
-        </div>
-        <span className="text-sm font-bold text-blue-600">{format.currency(total)}</span>
+    <div>
+      <div className="flex items-center gap-2 mb-4">
+        <p className="text-xs text-slate-400">
+          Novo sistema IVA dual: CBS (federal) + IBS (estadual/municipal) + IS (seletivo)
+        </p>
+        <span className="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-medium flex-shrink-0">
+          <Sparkles size={10} />
+          EC 132/2023
+        </span>
       </div>
-      <p className="text-xs text-slate-400 mb-4 pl-4">
-        Novo sistema IVA dual: CBS (federal) + IBS (estadual/municipal) + IS (seletivo)
-      </p>
 
       <div className="space-y-2">
         {keys.map((key) => {
@@ -112,12 +107,10 @@ function ReformTaxesSection() {
       </div>
 
       <div className="mt-4 pt-3 border-t border-blue-200 flex justify-between items-center">
-        <span className="text-sm font-semibold text-slate-600">
-          Total de Impostos (Pós Reforma)
-        </span>
+        <span className="text-sm font-semibold text-slate-600">Total de Impostos</span>
         <span className="text-lg font-bold text-blue-600">{format.currency(total)}</span>
       </div>
-    </section>
+    </div>
   );
 }
 

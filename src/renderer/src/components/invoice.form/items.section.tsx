@@ -69,9 +69,7 @@ function ItemsSection() {
   };
 
   return (
-    <section className="card p-5">
-      <h2 className="section-title mb-4">Itens da Nota</h2>
-
+    <div>
       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-4">
         <p className="text-xs font-semibold text-slate-500 mb-3 uppercase tracking-wide">
           Adicionar item
@@ -274,7 +272,7 @@ function ItemsSection() {
           </tfoot>
         </table>
       )}
-    </section>
+    </div>
   );
 }
 

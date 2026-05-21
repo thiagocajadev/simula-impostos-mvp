@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased] — 2026-05-21
+
+### Added
+
+- Add collapsible accordion sections to the NF form: all 7 sections (Regime Tributário, Dados da NF, Itens, Impostos Atual, Impostos Reforma, Resumo, Informações Adicionais) are individually expandable with contextual summary chips in the collapsed header. A single "Expandir todos / Recolher todos" button controls all at once. Regime Tributário is the first section; all start collapsed. Accordion state lives in `InvoiceForm` as a `Record<SectionKey, boolean>`, enabling bulk toggle without `useEffect`. Duplicate action buttons removed from the top toolbar.
+- Add zoom control and improved DANFE layout to the print preview. Zoom works via Ctrl+scroll (non-passive wheel listener on the scroll area), [−]/[+] step buttons, and a preset dropdown (50 / 75 / 90 / 100 / 125 / 150%). CSS `zoom` property adjusts layout and scroll area natively in Electron/Chromium. DANFE layout improvements: simulated 44-digit Chave de Acesso displayed in groups of 4 below the header; restructured tax calculation section with full-width horizontal rows for Regime Atual (7 taxes) and Pós Reforma (3 taxes, EC 132/2023), each with a colored total cell; integrated diff comparison widget in the totals block; expanded issuer block with CNPJ, IE, and Regime Tributário.
+
 ## [Unreleased] — 2026-05-20
 
 ### Fixed

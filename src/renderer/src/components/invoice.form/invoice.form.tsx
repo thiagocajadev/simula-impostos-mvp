@@ -1,11 +1,45 @@
-import { ArrowLeft, FileText, Save, Send } from "lucide-react";
+import {
+  ArrowLeft,
+  BarChart2,
+  ChevronsDown,
+  ChevronsUp,
+  FileText,
+  MessageSquare,
+  Package,
+  Receipt,
+  Save,
+  Scale,
+  Send,
+  Sparkles,
+} from "lucide-react";
+import { useState } from "react";
 import { format, REGIME_LABELS } from "../../invoice.format";
 import { useInvoiceStore } from "../../invoice.store";
+import { Accordion } from "./accordion";
 import { CurrentTaxesSection } from "./current-taxes.section";
 import { ItemsSection } from "./items.section";
 import { ReformTaxesSection } from "./reform-taxes.section";
 import { RegimeSection } from "./regime.section";
 import { TotalsSection } from "./totals.section";
+
+type SectionKey =
+  | "regime"
+  | "dados"
+  | "itens"
+  | "impostosAtual"
+  | "impostosReforma"
+  | "resumo"
+  | "adicionais";
+
+const CLOSED_ALL: Record<SectionKey, boolean> = {
+  regime: false,
+  dados: false,
+  itens: false,
+  impostosAtual: false,
+  impostosReforma: false,
+  resumo: false,
+  adicionais: false,
+};
 
 function PartyFields({
   title,
@@ -137,10 +171,88 @@ function PartyFields({
 function InvoiceForm() {
   const { currentInvoice, setPage, saveInvoice, setField, setIssuer, setRecipient } =
     useInvoiceStore();
+  const [open, setOpen] = useState<Record<SectionKey, boolean>>(CLOSED_ALL);
 
   if (!currentInvoice) {
     return null;
   }
+
+  const toggle = (key: SectionKey) =>
+    setOpen((previous) => ({ ...previous, [key]: !previous[key] }));
+
+  const allExpanded = Object.values(open).every(Boolean);
+
+  const toggleAll = () => {
+    const nextState = !allExpanded;
+    setOpen({
+      regime: nextState,
+      dados: nextState,
+      itens: nextState,
+      impostosAtual: nextState,
+      impostosReforma: nextState,
+      resumo: nextState,
+      adicionais: nextState,
+    });
+  };
+
+  const subtotal = currentInvoice.totalProducts + currentInvoice.totalServices;
+  const itemCount = currentInvoice.items.length;
+  const reformDiff = currentInvoice.totalReformTaxes - currentInvoice.totalCurrentTaxes;
+
+  const issuerSummary = currentInvoice.issuer.companyName ? (
+    <span className="text-xs text-slate-500 truncate max-w-[220px]">
+      {currentInvoice.issuer.companyName}
+    </span>
+  ) : (
+    <span className="text-xs text-slate-400 italic">Não informado</span>
+  );
+
+  const regimeSummary = (
+    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+      {REGIME_LABELS[currentInvoice.taxRegime]}
+    </span>
+  );
+
+  const itemsSummary =
+    itemCount > 0 ? (
+      <span className="text-xs text-slate-500">
+        {itemCount} {itemCount === 1 ? "item" : "itens"} —{" "}
+        <span className="font-mono font-medium">{format.currency(subtotal)}</span>
+      </span>
+    ) : (
+      <span className="text-xs text-slate-400 italic">Nenhum item</span>
+    );
+
+  const currentTaxesSummary = (
+    <span className="text-xs font-mono font-medium text-orange-600">
+      {format.currency(currentInvoice.totalCurrentTaxes)}
+    </span>
+  );
+
+  const reformTaxesSummary = (
+    <span className="text-xs font-mono font-medium text-blue-600">
+      {format.currency(currentInvoice.totalReformTaxes)}
+    </span>
+  );
+
+  const diffColor =
+    reformDiff < 0 ? "text-emerald-600" : reformDiff > 0 ? "text-red-500" : "text-slate-400";
+
+  const totalsSummary =
+    subtotal > 0 ? (
+      <span className={`text-xs font-medium ${diffColor}`}>
+        {reformDiff < 0 ? "↓" : reformDiff > 0 ? "↑" : "="} {format.currency(Math.abs(reformDiff))}
+      </span>
+    ) : undefined;
+
+  const additionalInfoSummary = currentInvoice.additionalInfo ? (
+    <span className="text-xs text-slate-400 italic max-w-[220px] truncate">
+      {currentInvoice.additionalInfo.slice(0, 40)}
+      {currentInvoice.additionalInfo.length > 40 ? "…" : ""}
+    </span>
+  ) : (
+    <span className="text-xs text-slate-400 italic">Vazio</span>
+  );
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -175,21 +287,30 @@ function InvoiceForm() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button type="button" onClick={() => saveInvoice("rascunho")} className="btn-secondary">
-            <Save size={15} />
-            Salvar Rascunho
-          </button>
-          <button type="button" onClick={() => saveInvoice("emitida")} className="btn-success">
-            <Send size={15} />
-            Emitir NF
-          </button>
-        </div>
+        <button type="button" onClick={toggleAll} className="btn-secondary">
+          {allExpanded ? <ChevronsUp size={15} /> : <ChevronsDown size={15} />}
+          {allExpanded ? "Recolher todos" : "Expandir todos"}
+        </button>
       </div>
 
-      <div className="space-y-4">
-        <section className="card p-5">
-          <h2 className="section-title mb-4">Dados da Nota Fiscal</h2>
+      <div className="space-y-3">
+        <Accordion
+          title="Regime Tributário"
+          icon={<Scale size={15} className="text-slate-500" />}
+          isOpen={open.regime}
+          onToggle={() => toggle("regime")}
+          summary={regimeSummary}
+        >
+          <RegimeSection />
+        </Accordion>
+
+        <Accordion
+          title="Dados da Nota Fiscal"
+          icon={<FileText size={15} className="text-slate-500" />}
+          isOpen={open.dados}
+          onToggle={() => toggle("dados")}
+          summary={issuerSummary}
+        >
           <div className="grid grid-cols-4 gap-3 mb-5">
             <div>
               <label htmlFor="nf-operationNature" className="label">
@@ -242,27 +363,65 @@ function InvoiceForm() {
               />
             </div>
           </div>
-        </section>
+        </Accordion>
 
-        <RegimeSection />
-        <ItemsSection />
+        <Accordion
+          title="Itens da Nota"
+          icon={<Package size={15} className="text-slate-500" />}
+          isOpen={open.itens}
+          onToggle={() => toggle("itens")}
+          summary={itemsSummary}
+        >
+          <ItemsSection />
+        </Accordion>
 
-        <div className="grid grid-cols-2 gap-4">
-          <CurrentTaxesSection />
-          <ReformTaxesSection />
+        <div className="grid grid-cols-2 gap-3">
+          <Accordion
+            title="Impostos — Regime Atual"
+            icon={<Receipt size={15} className="text-orange-500" />}
+            isOpen={open.impostosAtual}
+            onToggle={() => toggle("impostosAtual")}
+            summary={currentTaxesSummary}
+          >
+            <CurrentTaxesSection />
+          </Accordion>
+
+          <Accordion
+            title="Impostos — Pós Reforma"
+            icon={<Sparkles size={15} className="text-blue-500" />}
+            isOpen={open.impostosReforma}
+            onToggle={() => toggle("impostosReforma")}
+            summary={reformTaxesSummary}
+            className="bg-gradient-to-br from-blue-50/30 to-white"
+          >
+            <ReformTaxesSection />
+          </Accordion>
         </div>
 
-        <TotalsSection />
+        <Accordion
+          title="Resumo e Comparativo"
+          icon={<BarChart2 size={15} className="text-slate-500" />}
+          isOpen={open.resumo}
+          onToggle={() => toggle("resumo")}
+          summary={totalsSummary}
+        >
+          <TotalsSection />
+        </Accordion>
 
-        <section className="card p-5">
-          <h2 className="section-title mb-3">Informações Adicionais</h2>
+        <Accordion
+          title="Informações Adicionais"
+          icon={<MessageSquare size={15} className="text-slate-500" />}
+          isOpen={open.adicionais}
+          onToggle={() => toggle("adicionais")}
+          summary={additionalInfoSummary}
+        >
           <textarea
             className="input h-20 resize-none"
             value={currentInvoice.additionalInfo}
             onChange={(e) => setField("additionalInfo", e.target.value)}
             placeholder="Observações, dados complementares, referências..."
           />
-        </section>
+        </Accordion>
 
         <div className="flex justify-end gap-3 pb-6">
           <button type="button" onClick={() => setPage("list")} className="btn-secondary">
