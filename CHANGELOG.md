@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.4] — 2026-05-21
+
+### Added
+
+- Polish & UX sweep across the full app: author renamed to `@thiagocajadev` in package.json/dist config; `@media print` + `@page { size: A4; margin: 0 }` hides toolbar on PDF export and sets correct page size; PDF `marginType: "none"` (content carries its own padding); toolbar now sticky during DANFE scroll (`h-screen` + `flex-1 overflow-auto`); button "Add" renamed to "Adicionar"; DANFE borders standardised to neutral `1px solid #ccc/ddd`; block spacing increased to `marginBottom: 8`; actions column moved to first position in invoice list (⚙ header); duplicate printer icon removed.
+- Form grid harmonised: top row (`grid-cols-12`, Natureza `col-span-6`); `PartyFields` address/neighborhood/city/UF rows fill all 12 columns; items form row 2 (UN/Qtd/Vlr/Btn) fills 12 columns; `step="1"` on quantity and unit-price number inputs; placeholders added to all previously empty fields.
+- CNPJ/CPF auto-mask with alphanumeric support (IN RFB 2.229/2024, vigência jul/2026): accepts `[A-Z0-9]` in positions 1–12, numeric check-digits in 13–14; Mod-11 algorithm using `charCode − 48`; CPF detected by ≤11 numeric chars; test values (all-same chars) bypass validation; CEP mask; both values displayed formatted on load from store; on-blur validation with red ring + error message.
+- Tax totals moved to shared side-by-side footer bar below both accordion sections (Regime Atual orange / Pós Reforma blue), always aligned regardless of item count difference.
+- README expanded: `## Download` section with release link and platform table; full siglas table (ICMS, ISS, IPI, PIS, COFINS, IRPJ, CSLL, CBS, IBS, IS) with name, scope, and what each taxes; detailed description of all 4 tax regimes (Simples Nacional, MEI, Lucro Presumido, Lucro Real); EN→PT-BR glossary table (28 code terms mapped to interface labels).
+
 ## [Unreleased] — 2026-05-21
 
 ### Fixed

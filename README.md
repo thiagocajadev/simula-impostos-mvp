@@ -22,22 +22,58 @@
 
 ---
 
-O contador ou empresário preenche uma nota fiscal, seleciona o regime tributário e vê os totais sob os dois conjuntos de regras ao mesmo tempo, com um preview estilo DANFE pronto para impressão.
+O contador seleciona o regime tributário, preenche os dados da nota fiscal e vê os totais sob os dois conjuntos de regras ao mesmo tempo, com um preview estilo DANFE pronto para impressão.
+
+## Download
+
+Baixe o instalador mais recente em [github.com/thiagocajadev/simula-impostos-mvp/releases/latest](https://github.com/thiagocajadev/simula-impostos-mvp/releases/latest).
+
+| Plataforma | Arquivo                  |
+| :--------- | :----------------------- |
+| Linux      | `.AppImage` ou `.deb`    |
+| Windows    | `.exe` (instalador NSIS) |
 
 ## Conceitos fundamentais
 
 | Conceito                                                 | O que é                                                                                                                                                           |
 | :------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Reforma Tributária**                                   | Emenda constitucional EC 132/2023 que substitui ICMS, ISS, IPI, PIS e COFINS por três novos tributos: CBS, IBS e IS. A transição ocorre entre 2026 e 2033.        |
+| **NF-e** (Nota Fiscal Eletrônica)                        | Documento fiscal digital emitido pelo contribuinte para registrar operações de compra e venda de bens ou prestação de serviços.                                   |
 | **DANFE** (Documento Auxiliar da Nota Fiscal Eletrônica) | Documento impresso que acompanha a NF-e no transporte e na entrega. O app gera um preview estilo DANFE com controles de zoom e comparação tributária lado a lado. |
+| **CFOP** (Código Fiscal de Operações e Prestações)       | Código numérico que identifica a natureza de cada operação fiscal: venda, devolução, transferência etc.                                                           |
+| **NCM** (Nomenclatura Comum do Mercosul)                 | Código de 8 dígitos que classifica mercadorias e determina quais alíquotas de IPI e outros tributos incidem sobre o produto.                                      |
 | **Regime tributário**                                    | Classificação legal da empresa que define quais impostos incidem e em quais alíquotas. O app suporta quatro: Simples Nacional, MEI, Lucro Presumido e Lucro Real. |
-| **CBS** (Contribuição sobre Bens e Serviços)             | Contribuição federal criada pela reforma para substituir PIS e COFINS. Alíquota padrão na simulação: 8,8%.                                                        |
-| **IBS** (Imposto sobre Bens e Serviços)                  | Imposto estadual e municipal criado pela reforma para substituir ICMS e ISS. Alíquota padrão na simulação: 17,7%.                                                 |
-| **IS** (Imposto Seletivo)                                | Tributo sobre bens e serviços considerados prejudiciais, como tabaco e bebidas alcoólicas. Alíquota padrão na simulação: 0%.                                      |
+
+## Impostos do sistema atual
+
+| Sigla      | Nome completo                                          | Esfera    | O que tributa                                                                   |
+| :--------- | :----------------------------------------------------- | :-------- | :------------------------------------------------------------------------------ |
+| **ICMS**   | Imposto sobre Circulação de Mercadorias e Serviços     | Estadual  | Circulação de mercadorias e serviços de transporte e comunicação.               |
+| **ISS**    | Imposto sobre Serviços de Qualquer Natureza            | Municipal | Prestação de serviços listados na LC 116/2003.                                  |
+| **IPI**    | Imposto sobre Produtos Industrializados                | Federal   | Saída de produtos industrializados de estabelecimento industrial ou equiparado. |
+| **PIS**    | Programa de Integração Social                          | Federal   | Faturamento da empresa; financia seguro-desemprego e abono salarial.            |
+| **COFINS** | Contribuição para o Financiamento da Seguridade Social | Federal   | Faturamento da empresa; financia saúde, previdência e assistência social.       |
+| **IRPJ**   | Imposto de Renda Pessoa Jurídica                       | Federal   | Lucro da empresa (real, presumido ou arbitrado).                                |
+| **CSLL**   | Contribuição Social sobre o Lucro Líquido              | Federal   | Lucro líquido da empresa; destinada à seguridade social.                        |
+
+## Impostos pós-reforma (EC 132/2023)
+
+| Sigla   | Nome completo                      | Esfera               | O que substitui                                                                        | Alíquota padrão na simulação |
+| :------ | :--------------------------------- | :------------------- | :------------------------------------------------------------------------------------- | :--------------------------: |
+| **CBS** | Contribuição sobre Bens e Serviços | Federal              | PIS + COFINS                                                                           |             8,8%             |
+| **IBS** | Imposto sobre Bens e Serviços      | Estadual + Municipal | ICMS + ISS                                                                             |            17,7%             |
+| **IS**  | Imposto Seletivo                   | Federal              | Incide sobre bens prejudiciais (tabaco, bebidas alcoólicas, armas, veículos poluentes) |              0%              |
 
 ## Regimes tributários cobertos
 
-Os impostos do sistema atual variam por regime. Simples Nacional e MEI recolhem tributos por uma única guia DAS (Documento de Arrecadação do Simples Nacional); as alíquotas individuais não aparecem separadas.
+| Regime               | Descrição                                                                                                                                                                                        |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Simples Nacional** | Regime unificado para micro e pequenas empresas com faturamento até R$ 4,8 milhões/ano. Todos os tributos são recolhidos numa única guia (DAS), com alíquotas progressivas por faixa de receita. |
+| **MEI**              | Microempreendedor Individual, faturamento até R$ 81 mil/ano. Recolhe valor fixo mensal pelo DAS-MEI; isento de IRPJ, PIS, COFINS, IPI e CSLL.                                                    |
+| **Lucro Presumido**  | Regime simplificado para empresas com faturamento até R$ 78 milhões/ano. O lucro tributável é estimado por percentuais fixos sobre a receita, sem apuração real.                                 |
+| **Lucro Real**       | Obrigatório para empresas acima de R$ 78 milhões/ano ou de determinados setores. O IRPJ e CSLL incidem sobre o lucro efetivamente apurado na contabilidade.                                      |
+
+Os impostos do sistema atual variam por regime:
 
 | Regime           |   ICMS    |    ISS    |    IPI    |    PIS    |  COFINS   |   IRPJ    |   CSLL    |
 | :--------------- | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: |
@@ -47,6 +83,42 @@ Os impostos do sistema atual variam por regime. Simples Nacional e MEI recolhem 
 | Lucro Real       |    18%    |    5%     |    10%    |   1,65%   |   7,6%    |    15%    |    9%     |
 
 As alíquotas da reforma (CBS 8,8%, IBS 17,7%, IS 0%) se aplicam uniformemente nos quatro regimes.
+
+## Glossário — código (EN) → interface (PT-BR)
+
+Termos usados no código-fonte e seus equivalentes na interface do usuário.
+
+| Código (EN)        | Interface (PT-BR)       |
+| :----------------- | :---------------------- |
+| `invoice`          | Nota Fiscal             |
+| `issuer`           | Emitente                |
+| `recipient`        | Destinatário            |
+| `item`             | Item da Nota            |
+| `operationNature`  | Natureza da Operação    |
+| `series`           | Série                   |
+| `issueDate`        | Data de Emissão         |
+| `taxRegime`        | Regime Tributário       |
+| `current taxes`    | Impostos — Regime Atual |
+| `reform taxes`     | Impostos — Pós Reforma  |
+| `totalInvoice`     | Valor Total da NF       |
+| `totalProducts`    | Total de Produtos       |
+| `totalServices`    | Total de Serviços       |
+| `unitPrice`        | Valor Unitário          |
+| `quantity`         | Quantidade              |
+| `unit`             | Unidade (UN)            |
+| `produto`          | Produto                 |
+| `servico`          | Serviço                 |
+| `status: rascunho` | Rascunho                |
+| `status: emitida`  | Emitida                 |
+| `additionalInfo`   | Informações Adicionais  |
+| `print` / `toPDF`  | Salvar como PDF / DANFE |
+| `companyName`      | Razão Social            |
+| `cnpj`             | CNPJ / CPF              |
+| `ie`               | Inscrição Estadual      |
+| `zipCode`          | CEP                     |
+| `neighborhood`     | Bairro                  |
+| `city`             | Município               |
+| `state`            | UF                      |
 
 ## Como começar
 

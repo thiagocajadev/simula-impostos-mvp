@@ -12,7 +12,6 @@ function CurrentTaxesSection() {
 
   const taxes = currentInvoice.taxes.current;
   const keys = Object.keys(CURRENT_TAX_LABELS) as (keyof CurrentTaxes)[];
-  const total = Object.values(taxes).reduce((sum, tax) => sum + tax.amount, 0);
 
   return (
     <div>
@@ -49,7 +48,6 @@ function CurrentTaxesSection() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-400 truncate">{TAX_DESCRIPTIONS[key]}</p>
                 </div>
               </label>
 
@@ -89,11 +87,6 @@ function CurrentTaxesSection() {
             </div>
           );
         })}
-      </div>
-
-      <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
-        <span className="text-sm font-semibold text-slate-600">Total de Impostos</span>
-        <span className="text-lg font-bold text-orange-600">{format.currency(total)}</span>
       </div>
     </div>
   );

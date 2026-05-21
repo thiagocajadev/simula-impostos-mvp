@@ -137,7 +137,7 @@ function ItemsSection() {
             </select>
           </div>
 
-          <div className="col-span-1">
+          <div className="col-span-2">
             <label htmlFor="item-unit" className="label">
               UN
             </label>
@@ -151,7 +151,7 @@ function ItemsSection() {
             />
           </div>
 
-          <div className="col-span-2">
+          <div className="col-span-3">
             <label htmlFor="item-quantity" className="label">
               Quantidade *
             </label>
@@ -159,14 +159,14 @@ function ItemsSection() {
               id="item-quantity"
               type="number"
               min="0"
-              step="0.001"
+              step="1"
               value={form.quantity}
               onChange={(e) => setFormField("quantity", e.target.value)}
               className="input"
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-4">
             <label htmlFor="item-unitPrice" className="label">
               Valor Unitário *
             </label>
@@ -174,7 +174,7 @@ function ItemsSection() {
               id="item-unitPrice"
               type="number"
               min="0"
-              step="0.01"
+              step="1"
               value={form.unitPrice}
               onChange={(e) => setFormField("unitPrice", e.target.value)}
               placeholder="0,00"
@@ -182,14 +182,14 @@ function ItemsSection() {
             />
           </div>
 
-          <div className="col-span-2 flex items-end">
+          <div className="col-span-3 flex items-end">
             <button
               type="button"
               onClick={submitItem}
               className="btn-primary w-full justify-center"
             >
               <Plus size={14} />
-              Add
+              Adicionar
             </button>
           </div>
         </div>

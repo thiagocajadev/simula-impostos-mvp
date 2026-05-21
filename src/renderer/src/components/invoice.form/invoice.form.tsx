@@ -41,6 +41,116 @@ const CLOSED_ALL: Record<SectionKey, boolean> = {
   adicionais: false,
 };
 
+function maskCnpjCpf(raw: string): string {
+  const chars = raw
+    .replace(/[^A-Za-z0-9]/g, "")
+    .toUpperCase()
+    .slice(0, 14);
+  const hasLetter = /[A-Z]/.test(chars);
+
+  if (!hasLetter && chars.length <= 11) {
+    const cpfFormatted = chars
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    return cpfFormatted;
+  }
+
+  const len = chars.length;
+  if (len <= 2) {
+    return chars;
+  }
+  if (len <= 5) {
+    return `${chars.slice(0, 2)}.${chars.slice(2)}`;
+  }
+  if (len <= 8) {
+    return `${chars.slice(0, 2)}.${chars.slice(2, 5)}.${chars.slice(5)}`;
+  }
+  if (len <= 12) {
+    return `${chars.slice(0, 2)}.${chars.slice(2, 5)}.${chars.slice(5, 8)}/${chars.slice(8)}`;
+  }
+  const cnpjFormatted = `${chars.slice(0, 2)}.${chars.slice(2, 5)}.${chars.slice(5, 8)}/${chars.slice(8, 12)}-${chars.slice(12)}`;
+  return cnpjFormatted;
+}
+
+function maskZipCode(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(0, 8);
+  const formatted = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+  return formatted;
+}
+
+function charToValue(c: string): number {
+  return c.charCodeAt(0) - 48;
+}
+
+function cnpjCheckDigits(chars: string): string {
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+  const sum1 = chars
+    .slice(0, 12)
+    .split("")
+    .reduce((acc, c, i) => acc + charToValue(c) * weights1[i], 0);
+  const rem1 = sum1 % 11;
+  const dv1 = rem1 <= 1 ? 0 : 11 - rem1;
+
+  const base13 = `${chars.slice(0, 12)}${dv1}`;
+  const sum2 = base13.split("").reduce((acc, c, i) => acc + charToValue(c) * weights2[i], 0);
+  const rem2 = sum2 % 11;
+  const dv2 = rem2 <= 1 ? 0 : 11 - rem2;
+
+  const dvs = `${dv1}${dv2}`;
+  return dvs;
+}
+
+function isValidCnpj(chars: string): boolean {
+  if (chars.length !== 14) {
+    return false;
+  }
+  const expectedDvs = cnpjCheckDigits(chars);
+  const isValid = chars.slice(12) === expectedDvs;
+  return isValid;
+}
+
+function isTestDocument(chars: string): boolean {
+  return chars.length > 0 && new Set(chars).size === 1;
+}
+
+function validateDocument(value: string): string {
+  const chars = value.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+
+  if (chars.length === 0) {
+    return "";
+  }
+  if (isTestDocument(chars)) {
+    return "";
+  }
+
+  const isAllDigits = /^\d+$/.test(chars);
+
+  if (isAllDigits && chars.length === 11) {
+    return "";
+  }
+
+  if (chars.length === 14) {
+    const cnpjIsValid = isValidCnpj(chars);
+    const error = cnpjIsValid ? "" : "CNPJ inválido";
+    return error;
+  }
+
+  const error = "CPF: 11 dígitos · CNPJ: 14 caracteres (alfanumérico)";
+  return error;
+}
+
+function validateZipCode(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 0) {
+    return "";
+  }
+  const error = digits.length !== 8 ? "CEP deve ter 8 dígitos" : "";
+  return error;
+}
+
 function PartyFields({
   title,
   party,
@@ -51,6 +161,10 @@ function PartyFields({
   onChange: (field: string, value: string) => void;
 }) {
   const id = title.toLowerCase().replace(/\s+/g, "-");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const errorRing = (field: string) =>
+    fieldErrors[field] ? "border-red-400 focus:ring-red-400" : "";
 
   return (
     <div>
@@ -74,12 +188,17 @@ function PartyFields({
           </label>
           <input
             id={`${id}-cnpj`}
-            className="input"
-            value={party.cnpj}
-            onChange={(e) => onChange("cnpj", e.target.value)}
+            className={`input ${errorRing("cnpj")}`}
+            value={maskCnpjCpf(party.cnpj)}
+            onChange={(e) => onChange("cnpj", maskCnpjCpf(e.target.value))}
+            onBlur={(e) => {
+              const error = validateDocument(e.target.value);
+              setFieldErrors((prev) => ({ ...prev, cnpj: error }));
+            }}
             placeholder="00.000.000/0001-00"
             maxLength={18}
           />
+          {fieldErrors.cnpj && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.cnpj}</p>}
         </div>
         <div className="col-span-3">
           <label htmlFor={`${id}-ie`} className="label">
@@ -99,14 +218,21 @@ function PartyFields({
           </label>
           <input
             id={`${id}-zipCode`}
-            className="input"
-            value={party.zipCode}
-            onChange={(e) => onChange("zipCode", e.target.value)}
+            className={`input ${errorRing("zipCode")}`}
+            value={maskZipCode(party.zipCode)}
+            onChange={(e) => onChange("zipCode", maskZipCode(e.target.value))}
+            onBlur={(e) => {
+              const error = validateZipCode(e.target.value);
+              setFieldErrors((prev) => ({ ...prev, zipCode: error }));
+            }}
             placeholder="00000-000"
             maxLength={9}
           />
+          {fieldErrors.zipCode && (
+            <p className="text-xs text-red-500 mt-0.5">{fieldErrors.zipCode}</p>
+          )}
         </div>
-        <div className="col-span-5">
+        <div className="col-span-6">
           <label htmlFor={`${id}-address`} className="label">
             Endereço
           </label>
@@ -115,7 +241,7 @@ function PartyFields({
             className="input"
             value={party.address}
             onChange={(e) => onChange("address", e.target.value)}
-            placeholder="Rua / Av."
+            placeholder="Rua, Av., Travessa..."
           />
         </div>
         <div className="col-span-1">
@@ -127,9 +253,10 @@ function PartyFields({
             className="input"
             value={party.number}
             onChange={(e) => onChange("number", e.target.value)}
+            placeholder="S/N"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <label htmlFor={`${id}-neighborhood`} className="label">
             Bairro
           </label>
@@ -138,9 +265,10 @@ function PartyFields({
             className="input"
             value={party.neighborhood}
             onChange={(e) => onChange("neighborhood", e.target.value)}
+            placeholder="Centro"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-10">
           <label htmlFor={`${id}-city`} className="label">
             Município
           </label>
@@ -149,6 +277,7 @@ function PartyFields({
             className="input"
             value={party.city}
             onChange={(e) => onChange("city", e.target.value)}
+            placeholder="São Paulo"
           />
         </div>
         <div className="col-span-2">
@@ -160,6 +289,7 @@ function PartyFields({
             className="input uppercase"
             value={party.state}
             onChange={(e) => onChange("state", e.target.value.toUpperCase())}
+            placeholder="SP"
             maxLength={2}
           />
         </div>
@@ -311,8 +441,8 @@ function InvoiceForm() {
           onToggle={() => toggle("dados")}
           summary={issuerSummary}
         >
-          <div className="grid grid-cols-4 gap-3 mb-5">
-            <div>
+          <div className="grid grid-cols-12 gap-3 mb-5">
+            <div className="col-span-6">
               <label htmlFor="nf-operationNature" className="label">
                 Natureza da Operação
               </label>
@@ -321,9 +451,10 @@ function InvoiceForm() {
                 className="input"
                 value={currentInvoice.operationNature}
                 onChange={(e) => setField("operationNature", e.target.value)}
+                placeholder="Venda de mercadoria"
               />
             </div>
-            <div>
+            <div className="col-span-4">
               <label htmlFor="nf-issueDate" className="label">
                 Data de Emissão
               </label>
@@ -335,7 +466,7 @@ function InvoiceForm() {
                 onChange={(e) => setField("issueDate", e.target.value)}
               />
             </div>
-            <div>
+            <div className="col-span-2">
               <label htmlFor="nf-series" className="label">
                 Série
               </label>
@@ -344,6 +475,7 @@ function InvoiceForm() {
                 className="input"
                 value={currentInvoice.series}
                 onChange={(e) => setField("series", e.target.value)}
+                placeholder="001"
                 maxLength={3}
               />
             </div>
@@ -396,6 +528,21 @@ function InvoiceForm() {
           >
             <ReformTaxesSection />
           </Accordion>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="card px-5 py-3 flex items-center justify-between">
+            <span className="text-sm font-semibold text-slate-600">Total — Regime Atual</span>
+            <span className="text-xl font-bold text-orange-600">
+              {format.currency(currentInvoice.totalCurrentTaxes)}
+            </span>
+          </div>
+          <div className="card px-5 py-3 flex items-center justify-between bg-gradient-to-br from-blue-50/30 to-white">
+            <span className="text-sm font-semibold text-slate-600">Total — Pós Reforma</span>
+            <span className="text-xl font-bold text-blue-600">
+              {format.currency(currentInvoice.totalReformTaxes)}
+            </span>
+          </div>
         </div>
 
         <Accordion

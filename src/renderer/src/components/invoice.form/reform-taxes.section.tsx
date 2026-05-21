@@ -18,7 +18,6 @@ function ReformTaxesSection() {
 
   const taxes = currentInvoice.taxes.reform;
   const keys = Object.keys(REFORM_TAX_LABELS) as (keyof ReformTaxes)[];
-  const total = Object.values(taxes).reduce((sum, tax) => sum + tax.amount, 0);
 
   return (
     <div>
@@ -64,7 +63,6 @@ function ReformTaxesSection() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-400 truncate">{TAX_DESCRIPTIONS[key]}</p>
                 </div>
               </label>
 
@@ -104,11 +102,6 @@ function ReformTaxesSection() {
             </div>
           );
         })}
-      </div>
-
-      <div className="mt-4 pt-3 border-t border-blue-200 flex justify-between items-center">
-        <span className="text-sm font-semibold text-slate-600">Total de Impostos</span>
-        <span className="text-lg font-bold text-blue-600">{format.currency(total)}</span>
       </div>
     </div>
   );

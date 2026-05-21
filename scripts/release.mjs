@@ -23,11 +23,11 @@ function run() {
 
   const tag = `v${nextVersion}`;
 
-  exec(`git add package.json`);
+  exec("git add package.json");
   exec(`git commit -m "chore: release ${tag}"`);
   exec(`git tag ${tag}`);
-  exec(`git push`);
-  exec(`git push --tags`);
+  exec("git push");
+  exec("git push --tags");
 
   console.log(`Released ${tag}`);
 }

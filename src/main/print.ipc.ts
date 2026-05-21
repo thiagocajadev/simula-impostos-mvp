@@ -13,7 +13,7 @@ function registerPrintHandlers(): void {
       const pdfData = await browserWindow.webContents.printToPDF({
         printBackground: true,
         pageSize: "A4",
-        margins: { marginType: "printableArea" },
+        margins: { marginType: "none" },
       });
 
       const { canceled, filePath } = await dialog.showSaveDialog(browserWindow, {

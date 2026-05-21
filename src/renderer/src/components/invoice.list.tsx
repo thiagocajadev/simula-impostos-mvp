@@ -1,4 +1,4 @@
-import { Edit2, Eye, FileText, Plus, Printer, Trash2 } from "lucide-react";
+import { Edit2, Eye, FileText, Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { format, REGIME_LABELS, STATUS_LABELS } from "../invoice.format";
 import { useInvoiceStore } from "../invoice.store";
@@ -68,6 +68,9 @@ function InvoiceList() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="px-4 py-3 text-center font-semibold text-slate-600 text-xs uppercase tracking-wide">
+                  ⚙
+                </th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wide">
                   Número
                 </th>
@@ -92,12 +95,41 @@ function InvoiceList() {
                 <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs uppercase tracking-wide">
                   Status
                 </th>
-                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {invoices.map((invoice) => (
                 <tr key={invoice.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1 justify-center">
+                      {invoice.status === "rascunho" && (
+                        <button
+                          type="button"
+                          onClick={() => editInvoice(invoice)}
+                          title="Editar"
+                          className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
+                        >
+                          <Edit2 size={14} />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => printInvoice(invoice)}
+                        title="Visualizar DANFE"
+                        className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
+                      >
+                        <Eye size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => confirmDelete(invoice)}
+                        title="Excluir"
+                        className="p-1.5 rounded hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
                   <td className="px-4 py-3 font-mono font-medium text-blue-600">
                     {format.invoiceNumber(invoice.number)}-{invoice.series}
                   </td>
@@ -123,46 +155,6 @@ function InvoiceList() {
                     >
                       {STATUS_LABELS[invoice.status]}
                     </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1 justify-end">
-                      {invoice.status === "emitida" && (
-                        <button
-                          type="button"
-                          onClick={() => printInvoice(invoice)}
-                          title="Imprimir / Visualizar DANFE"
-                          className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
-                        >
-                          <Printer size={14} />
-                        </button>
-                      )}
-                      {invoice.status === "rascunho" && (
-                        <button
-                          type="button"
-                          onClick={() => editInvoice(invoice)}
-                          title="Editar"
-                          className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
-                        >
-                          <Edit2 size={14} />
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => printInvoice(invoice)}
-                        title="Visualizar"
-                        className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
-                      >
-                        <Eye size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => confirmDelete(invoice)}
-                        title="Excluir"
-                        className="p-1.5 rounded hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
                   </td>
                 </tr>
               ))}

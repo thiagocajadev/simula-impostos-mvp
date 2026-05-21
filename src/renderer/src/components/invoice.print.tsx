@@ -147,11 +147,11 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 190px 120px",
-          border: "2px solid #222",
-          marginBottom: 3,
+          border: "1px solid #ccc",
+          marginBottom: 8,
         }}
       >
-        <div style={{ padding: "6px 8px", borderRight: "1px solid #222" }}>
+        <div style={{ padding: "6px 8px", borderRight: "1px solid #ccc" }}>
           <div style={{ fontSize: 12, fontWeight: 900, marginBottom: 2, color: "#111" }}>
             {invoice.issuer.companyName || "EMITENTE NÃO INFORMADO"}
           </div>
@@ -208,7 +208,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           style={{
             padding: "8px",
             textAlign: "center",
-            borderRight: "1px solid #222",
+            borderRight: "1px solid #ccc",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -286,7 +286,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           border: "1px dashed #aaa",
           background: "#fafafa",
           padding: "4px 8px",
-          marginBottom: 3,
+          marginBottom: 8,
           display: "flex",
           alignItems: "center",
           gap: 12,
@@ -325,7 +325,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           gap: 0,
           border: "1px solid #ddd",
           padding: "4px 8px",
-          marginBottom: 3,
+          marginBottom: 8,
         }}
       >
         <Field label="Natureza da Operação" value={invoice.operationNature} />
@@ -338,7 +338,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
       </div>
 
       {/* Destinatário */}
-      <div style={{ border: "1px solid #ddd", marginBottom: 3, overflow: "hidden" }}>
+      <div style={{ border: "1px solid #ddd", marginBottom: 8, overflow: "hidden" }}>
         <SectionHeader label="Destinatário / Remetente" />
         <div style={{ padding: "4px 8px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "0 16px" }}>
@@ -359,7 +359,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
       </div>
 
       {/* Itens */}
-      <div style={{ border: "1px solid #ddd", marginBottom: 3, overflow: "hidden" }}>
+      <div style={{ border: "1px solid #ddd", marginBottom: 8, overflow: "hidden" }}>
         <SectionHeader label="Dados dos Produtos / Serviços" />
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 8 }}>
           <thead>
@@ -476,7 +476,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
       </div>
 
       {/* Cálculo do Imposto */}
-      <div style={{ border: "1px solid #ddd", marginBottom: 3, overflow: "hidden" }}>
+      <div style={{ border: "1px solid #ddd", marginBottom: 8, overflow: "hidden" }}>
         <SectionHeader label="Cálculo do Imposto" />
 
         {/* Regime Atual */}
@@ -568,10 +568,10 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
       {/* Totais + Comparativo */}
       <div
         style={{
-          border: "2px solid #1e293b",
+          border: "1px solid #ddd",
           borderRadius: 4,
           overflow: "hidden",
-          marginBottom: 3,
+          marginBottom: 8,
         }}
       >
         <div
@@ -677,7 +677,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
           style={{
             border: "1px solid #ddd",
             padding: "4px 8px",
-            marginBottom: 3,
+            marginBottom: 8,
             borderRadius: 2,
           }}
         >
@@ -767,8 +767,8 @@ function InvoicePrint() {
   const zoomIn = () => setZoom((previous) => Math.min(150, previous + 10));
 
   return (
-    <div className="min-h-screen bg-slate-200 flex flex-col">
-      <div className="bg-slate-800 text-white px-6 py-3 flex items-center justify-between flex-shrink-0">
+    <div className="h-screen bg-slate-200 flex flex-col">
+      <div className="no-print bg-slate-800 text-white px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
           <button
             type="button"

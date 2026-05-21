@@ -78,4 +78,13 @@
     margin: 0;
     background: white;
   }
+
+  .no-print {
+    display: none !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
 }
