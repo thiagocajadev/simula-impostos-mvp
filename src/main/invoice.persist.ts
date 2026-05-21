@@ -44,13 +44,46 @@ async function fileExists(filePath: string): Promise<boolean> {
   }
 }
 
+function migrateParty(party: Record<string, unknown>): Record<string, unknown> {
+  const out = { ...party };
+  if ("cnpj" in out && !("taxId" in out)) {
+    out.taxId = out.cnpj;
+    delete out.cnpj;
+  }
+  if ("ie" in out && !("stateRegistration" in out)) {
+    out.stateRegistration = out.ie;
+    delete out.ie;
+  }
+  return out;
+}
+
+function migrateInvoice(item: Record<string, unknown>): Record<string, unknown> {
+  const out = { ...item };
+  if (out.issuer && typeof out.issuer === "object") {
+    out.issuer = migrateParty(out.issuer as Record<string, unknown>);
+  }
+  if (out.recipient && typeof out.recipient === "object") {
+    out.recipient = migrateParty(out.recipient as Record<string, unknown>);
+  }
+  if (Array.isArray(out.items)) {
+    out.items = out.items.map((it: Record<string, unknown>) => {
+      if (it.type === "produto") return { ...it, type: "product" };
+      if (it.type === "servico") return { ...it, type: "service" };
+      return it;
+    });
+  }
+  if (out.status === "rascunho") out.status = "draft";
+  if (out.status === "emitida") out.status = "issued";
+  return out;
+}
+
 async function readInvoices(): Promise<unknown[]> {
   const path = resolveDataPath();
   try {
     const content = await readFile(path, "utf-8");
     const all = JSON.parse(content) as unknown[];
-
-    const valid = all.filter(isValidInvoice);
+    const migrated = all.map((item) => migrateInvoice(item as Record<string, unknown>));
+    const valid = migrated.filter(isValidInvoice);
     return valid;
   } catch {
     const empty: unknown[] = [];
