@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { is } from "@electron-toolkit/utils";
 import { BrowserWindow, shell } from "electron";
 
-function createWindow(): void {
+function createWindow(): BrowserWindow {
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 820,
@@ -30,6 +30,8 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
+
+  return mainWindow;
 }
 
 export { createWindow };
