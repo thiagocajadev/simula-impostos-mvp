@@ -1,9 +1,16 @@
 import { join } from "node:path";
 import { is } from "@electron-toolkit/utils";
-import { BrowserWindow, nativeImage, shell } from "electron";
+import { app, BrowserWindow, nativeImage, shell } from "electron";
+
+function resolveIconPath(): string {
+  if (app.isPackaged) {
+    return join(process.resourcesPath, "icon.png");
+  }
+  return join(app.getAppPath(), "resources/icon.png");
+}
 
 function createWindow(): BrowserWindow {
-  const icon = nativeImage.createFromPath(join(__dirname, "../../resources/icon.png"));
+  const icon = nativeImage.createFromPath(resolveIconPath());
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 820,
