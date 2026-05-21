@@ -2,11 +2,20 @@
   "name": "simula-impostos-mvp",
   "version": "1.0.0",
   "description": "Simulador de Impostos Brasileiros — Regime Atual vs Reforma Tributária",
+  "homepage": "https://github.com/thiagocajaiba/simula-impostos-mvp",
+  "author": {
+    "name": "Thiago Cajaiba",
+    "email": "thiago.cajaiba@gmail.com"
+  },
   "main": "out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev -- --no-sandbox",
     "build": "electron-vite build",
     "start": "electron-vite preview -- --no-sandbox",
+    "dist": "electron-vite build && electron-builder",
+    "dist:win": "electron-vite build && electron-builder --win",
+    "dist:linux": "electron-vite build && electron-builder --linux",
+    "release": "git tag v$(node -p \"require('./package.json').version\") && git push --tags",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
     "lint:biome": "biome check .",
     "lint:biome:fix": "biome check --write ."
@@ -36,11 +45,26 @@
   "build": {
     "appId": "br.com.simulaimpostos.mvp",
     "productName": "Simula Impostos",
+    "directories": {
+      "output": "dist",
+      "buildResources": "resources"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/icons/512x512.png",
+        "to": "icon.png"
+      }
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "resources/icon.ico"
+    },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ],
+      "target": ["AppImage", "deb"],
+      "icon": "icons",
       "category": "Finance"
     }
   }
