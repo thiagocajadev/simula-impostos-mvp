@@ -84,9 +84,23 @@ jobs:
           path: artifacts
           merge-multiple: true
 
+      - uses: actions/checkout@v4
+
       - uses: softprops/action-gh-release@v2
         with:
           files: artifacts/**
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prune old releases (keep latest 2)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release list --limit 100 --json tagName,isDraft,isPrerelease \
+            --jq '.[] | select(.isDraft == false and .isPrerelease == false) | .tagName' \
+            | tail -n +3 \
+            | while read tag; do
+                echo "Deleting release and tag: $tag"
+                gh release delete "$tag" --yes --cleanup-tag
+              done
