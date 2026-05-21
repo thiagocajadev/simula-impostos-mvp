@@ -1,8 +1,9 @@
 import { join } from "node:path";
 import { is } from "@electron-toolkit/utils";
-import { BrowserWindow, shell } from "electron";
+import { BrowserWindow, nativeImage, shell } from "electron";
 
 function createWindow(): BrowserWindow {
+  const icon = nativeImage.createFromPath(join(__dirname, "../../resources/icon.png"));
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 820,
@@ -11,7 +12,7 @@ function createWindow(): BrowserWindow {
     show: false,
     autoHideMenuBar: true,
     titleBarStyle: "default",
-    icon: join(__dirname, "../../resources/icon.png"),
+    icon,
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
