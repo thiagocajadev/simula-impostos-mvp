@@ -103,7 +103,7 @@ function InvoiceList() {
                   </td>
                   <td className="px-4 py-3 text-slate-600">{format.date(invoice.issueDate)}</td>
                   <td className="px-4 py-3 text-slate-800 font-medium">
-                    {invoice.recipient.companyName || (
+                    {invoice.recipient?.companyName || (
                       <span className="text-slate-400 italic">—</span>
                     )}
                   </td>
