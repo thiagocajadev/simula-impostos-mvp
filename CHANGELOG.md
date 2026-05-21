@@ -4,6 +4,12 @@
 
 ### Fixed
 
+- Add `README.md` with project introduction in pt-BR, fundamental concepts table (Reforma Tributária, DANFE, regime tributário, CBS, IBS, IS), tax regime comparison table with default rates, dev/build/release scripts reference, project layout, and distribution instructions.
+
+## [Unreleased] — 2026-05-21
+
+### Fixed
+
 - Refactor `src/main/index.ts` into semantic modules: extract seed data to `invoice.seed.ts`, async persistence layer (read/write/loadOrSeed) to `invoice.persist.ts`, IPC handlers to `invoice.ipc.ts` and `print.ipc.ts`, window factory to `window.ts`; entry point reduced to 21 lines. Rename `getDataFile()` → `resolveDataPath()` (banned verb `get`). Convert sync file I/O (`readFileSync`/`writeFileSync`) to async (`readFile`/`writeFile`). Fix CQS violation in `loadInvoices` by splitting into `readInvoices()` (query) and `loadOrSeedInvoices()` (orchestrator). Move `generateId()` and `nextInvoiceNumber()` from `invoice.format.ts` to `invoice.compute.ts` (SRP); update import in `invoice.store.ts`.
 
 ## [Unreleased] — 2026-05-21
