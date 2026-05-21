@@ -60,7 +60,7 @@ function InvoiceList() {
           <p className="text-slate-400 text-sm mb-5">Comece emitindo sua primeira NF simulada</p>
           <button type="button" onClick={newInvoice} className="btn-primary">
             <Plus size={15} />
-            Criar primeira NF
+            Nova Nota Fiscal
           </button>
         </div>
       ) : (
@@ -115,7 +115,7 @@ function InvoiceList() {
                       <button
                         type="button"
                         onClick={() => printInvoice(invoice)}
-                        title="Visualizar DANFE"
+                        title="Visualizar Cálculo de Imposto"
                         className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
                       >
                         <Eye size={14} />

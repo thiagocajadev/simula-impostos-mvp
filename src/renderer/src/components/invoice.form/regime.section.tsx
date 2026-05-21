@@ -33,7 +33,7 @@ function RegimeSection() {
             key={option.value}
             className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
               isActive
-                ? "border-blue-500 bg-blue-50"
+                ? "border-slate-200 bg-blue-50"
                 : "border-slate-200 bg-white hover:border-slate-300"
             }`}
           >

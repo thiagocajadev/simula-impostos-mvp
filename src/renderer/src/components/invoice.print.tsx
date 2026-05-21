@@ -86,11 +86,10 @@ function TaxTotalCell({ total, color }: { total: number; color: string }) {
   return (
     <td
       style={{
-        border: `1px solid ${color}`,
-        borderLeft: `3px solid ${color}`,
+        border: "1px solid #ddd",
         padding: "3px 8px",
         textAlign: "right",
-        background: `${color}10`,
+        background: `${color}20`,
         minWidth: 80,
       }}
     >
@@ -215,13 +214,13 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
             gap: 4,
           }}
         >
-          <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: "0.12em", color: "#c00" }}>
-            DANFE
+          <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: "0.06em", color: "#c00" }}>
+            CÁLCULO DE IMPOSTO
           </div>
           <div style={{ fontSize: 7, fontWeight: 700, color: "#c00", lineHeight: 1.3 }}>
-            Documento Auxiliar da
+            Simulação Tributária
             <br />
-            Nota Fiscal Eletrônica
+            NF-e Eletrônica
           </div>
           <div
             style={{
@@ -485,7 +484,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
             style={{
               padding: "2px 8px",
               background: "#fff7ed",
-              borderBottom: "1px solid #fed7aa",
+              borderBottom: "1px solid #e5e7eb",
               fontSize: 7,
               fontWeight: 700,
               color: "#c2410c",
@@ -523,7 +522,7 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
             style={{
               padding: "2px 8px",
               background: "#eff6ff",
-              borderBottom: "1px solid #bfdbfe",
+              borderBottom: "1px solid #e5e7eb",
               fontSize: 7,
               fontWeight: 700,
               color: "#1d4ed8",

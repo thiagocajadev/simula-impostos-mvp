@@ -3,14 +3,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/thiagocajaiba/simula-impostos-mvp/releases/latest">
-    <img src="https://img.shields.io/github/v/release/thiagocajaiba/simula-impostos-mvp?label=release&color=brightgreen" alt="GitHub release" />
-  </a>
+  <a href="https://github.com/thiagocajadev/simula-impostos-mvp/releases/latest"><img src="https://img.shields.io/github/v/release/thiagocajadev/simula-impostos-mvp?label=release&color=brightgreen" alt="GitHub release" /></a>
   <img src="https://img.shields.io/badge/Electron-34-47848F?logo=electron&logoColor=white" alt="Electron" />
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
 </p>
 
 <h1 align="center">Simula Impostos</h1>
@@ -32,6 +30,7 @@ Baixe o instalador mais recente em [github.com/thiagocajadev/simula-impostos-mvp
 | :--------- | :----------------------- |
 | Linux      | `.AppImage` ou `.deb`    |
 | Windows    | `.exe` (instalador NSIS) |
+| macOS      | `.dmg`                   |
 
 ## Conceitos fundamentais
 
@@ -44,7 +43,8 @@ Baixe o instalador mais recente em [github.com/thiagocajadev/simula-impostos-mvp
 | **NCM** (Nomenclatura Comum do Mercosul)                 | Código de 8 dígitos que classifica mercadorias e determina quais alíquotas de IPI e outros tributos incidem sobre o produto.                                      |
 | **Regime tributário**                                    | Classificação legal da empresa que define quais impostos incidem e em quais alíquotas. O app suporta quatro: Simples Nacional, MEI, Lucro Presumido e Lucro Real. |
 
-## Impostos do sistema atual
+<details>
+<summary><strong>Impostos do sistema atual</strong></summary>
 
 | Sigla      | Nome completo                                          | Esfera    | O que tributa                                                                   |
 | :--------- | :----------------------------------------------------- | :-------- | :------------------------------------------------------------------------------ |
@@ -56,7 +56,10 @@ Baixe o instalador mais recente em [github.com/thiagocajadev/simula-impostos-mvp
 | **IRPJ**   | Imposto de Renda Pessoa Jurídica                       | Federal   | Lucro da empresa (real, presumido ou arbitrado).                                |
 | **CSLL**   | Contribuição Social sobre o Lucro Líquido              | Federal   | Lucro líquido da empresa; destinada à seguridade social.                        |
 
-## Impostos pós-reforma (EC 132/2023)
+</details>
+
+<details>
+<summary><strong>Impostos pós-reforma (EC 132/2023)</strong></summary>
 
 | Sigla   | Nome completo                      | Esfera               | O que substitui                                                                        | Alíquota padrão na simulação |
 | :------ | :--------------------------------- | :------------------- | :------------------------------------------------------------------------------------- | :--------------------------: |
@@ -64,7 +67,10 @@ Baixe o instalador mais recente em [github.com/thiagocajadev/simula-impostos-mvp
 | **IBS** | Imposto sobre Bens e Serviços      | Estadual + Municipal | ICMS + ISS                                                                             |            17,7%             |
 | **IS**  | Imposto Seletivo                   | Federal              | Incide sobre bens prejudiciais (tabaco, bebidas alcoólicas, armas, veículos poluentes) |              0%              |
 
-## Regimes tributários cobertos
+</details>
+
+<details>
+<summary><strong>Regimes tributários cobertos</strong></summary>
 
 | Regime               | Descrição                                                                                                                                                                                        |
 | :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -84,7 +90,10 @@ Os impostos do sistema atual variam por regime:
 
 As alíquotas da reforma (CBS 8,8%, IBS 17,7%, IS 0%) se aplicam uniformemente nos quatro regimes.
 
-## Glossário — código (EN) → interface (PT-BR)
+</details>
+
+<details>
+<summary><strong>Glossário — código (EN) → interface (PT-BR)</strong></summary>
 
 Termos usados no código-fonte e seus equivalentes na interface do usuário.
 
@@ -120,11 +129,13 @@ Termos usados no código-fonte e seus equivalentes na interface do usuário.
 | `city`             | Município               |
 | `state`            | UF                      |
 
+</details>
+
 ## Como começar
 
 **Pré-requisitos**
 
-- Node.js 20 ou superior
+- Node.js 24 ou superior
 - npm 10 ou superior
 
 **Rodar em modo desenvolvimento**
@@ -146,6 +157,7 @@ O Electron abre uma janela com hot reload via Vite.
 | `npm run dist`           | Empacota para a plataforma atual             |
 | `npm run dist:win`       | Gera instalador Windows (NSIS)               |
 | `npm run dist:linux`     | Gera pacotes AppImage e `.deb`               |
+| `npm run dist:mac`       | Gera instalador macOS (DMG)                  |
 | `npm run typecheck`      | Roda `tsc --noEmit` nos dois tsconfig        |
 | `npm run lint:biome`     | Verifica o código com Biome                  |
 | `npm run lint:biome:fix` | Verifica e corrige automaticamente com Biome |
@@ -183,6 +195,7 @@ O build gera os instaladores em `dist/`.
 | :--------- | :----------------------- | :------------------- |
 | Linux      | AppImage + `.deb`        | `npm run dist:linux` |
 | Windows    | Instalador NSIS (`.exe`) | `npm run dist:win`   |
+| macOS      | DMG (`.dmg`)             | `npm run dist:mac`   |
 
 Para lançar uma nova versão:
 
@@ -193,3 +206,15 @@ npm run release:major  # major: 1.0.1 -> 2.0.0
 ```
 
 O script atualiza o `package.json`, cria o commit, adiciona a tag e envia ao repositório. Um workflow no GitHub Actions detecta a tag e publica os instaladores.
+
+## Aviso importante
+
+> **Este projeto é exclusivamente para fins de estudo e demonstração.**
+
+Todos os dados exibidos são **fictícios e simulados**. Os cálculos de impostos utilizam alíquotas estimadas e **não têm validade fiscal, contábil ou jurídica**. Por se tratar de um MVP, o app **não contempla todas as validações, regras de exceção e particularidades** da legislação tributária brasileira.
+
+Não utilize os valores gerados para declarações fiscais, consultas profissionais ou qualquer finalidade oficial.
+
+---
+
+Bons códigos e bons estudos! 🚀

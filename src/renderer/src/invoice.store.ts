@@ -28,27 +28,62 @@ function defaultIssuer() {
 }
 
 function emptyInvoice(invoices: Invoice[]): Invoice {
-  const regime: TaxRegime = "lucro_presumido";
+  const regime: TaxRegime = "simples_nacional";
   const now = new Date().toISOString();
+  const items: InvoiceItem[] = [
+    {
+      id: generateId(),
+      description: 'Notebook Dell Inspiron 15"',
+      ncm: "84713012",
+      cfop: "5102",
+      unit: "UN",
+      quantity: 5,
+      unitPrice: 3500.0,
+      totalPrice: 17500.0,
+      type: "produto",
+    },
+    {
+      id: generateId(),
+      description: "Mouse Óptico sem Fio Logitech MX Master 3",
+      ncm: "84716054",
+      cfop: "5102",
+      unit: "UN",
+      quantity: 10,
+      unitPrice: 250.0,
+      totalPrice: 2500.0,
+      type: "produto",
+    },
+    {
+      id: generateId(),
+      description: "Contrato de Suporte Técnico Mensal",
+      ncm: "",
+      cfop: "5933",
+      unit: "MÊS",
+      quantity: 1,
+      unitPrice: 2000.0,
+      totalPrice: 2000.0,
+      type: "servico",
+    },
+  ];
   const invoice: Invoice = {
     id: generateId(),
     number: nextInvoiceNumber(invoices),
     series: "001",
     issueDate: now.slice(0, 10),
-    operationNature: "Venda de mercadoria",
+    operationNature: "Venda de produtos de informática e prestação de serviços",
     issuer: defaultIssuer(),
     recipient: {
-      companyName: "",
-      cnpj: "",
-      ie: "",
-      zipCode: "",
-      address: "",
-      number: "",
-      neighborhood: "",
-      city: "",
-      state: "",
+      companyName: "Tech Solutions Comércio e Serviços Ltda",
+      cnpj: "11222333000181",
+      ie: "987654321",
+      zipCode: "04571010",
+      address: "Av. das Nações Unidas",
+      number: "12901",
+      neighborhood: "Brooklin Paulista",
+      city: "São Paulo",
+      state: "SP",
     },
-    items: [],
+    items,
     taxRegime: regime,
     taxes: {
       current: createDefaultCurrentTaxes(regime),
@@ -59,12 +94,13 @@ function emptyInvoice(invoices: Invoice[]): Invoice {
     totalCurrentTaxes: 0,
     totalReformTaxes: 0,
     totalInvoice: 0,
-    additionalInfo: "",
+    additionalInfo:
+      "NF de demonstração — dados fictícios para fins educativos. Cálculos estimados com alíquotas da Reforma Tributária (EC 132/2023).",
     status: "rascunho",
     createdAt: now,
     updatedAt: now,
   };
-  return invoice;
+  return recalcTotals(invoice);
 }
 
 function recalcTotals(invoice: Invoice): Invoice {

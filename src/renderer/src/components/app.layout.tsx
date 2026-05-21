@@ -1,4 +1,4 @@
-import { FileText, List, Plus } from "lucide-react";
+import { FileText, Github, List, Plus } from "lucide-react";
 import logo from "../assets/logo.png";
 import { useInvoiceStore } from "../invoice.store";
 
@@ -47,9 +47,20 @@ function Layout({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="px-5 py-4 border-t border-slate-700">
-          <div className="flex items-center gap-2">
-            <FileText size={13} className="text-slate-500" />
-            <span className="text-xs text-slate-500">Sem validade fiscal</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText size={13} className="text-slate-500" />
+              <span className="text-xs text-slate-500">Sem validade fiscal</span>
+            </div>
+            <a
+              href="https://github.com/thiagocajadev/simula-impostos-mvp"
+              target="_blank"
+              rel="noreferrer"
+              title="Ver no GitHub"
+              className="text-slate-500 hover:text-white transition-colors"
+            >
+              <Github size={14} />
+            </a>
           </div>
         </div>
       </aside>

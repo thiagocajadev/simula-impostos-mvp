@@ -37,7 +37,7 @@ function ReformTaxesSection() {
           return (
             <div
               key={key}
-              className={`imposto-row border-blue-100 bg-blue-50/50 ${!tax.enabled ? "opacity-50" : ""}`}
+              className={`imposto-row bg-blue-50/50 ${!tax.enabled ? "opacity-50" : ""}`}
             >
               <label className="flex items-center gap-2.5 cursor-pointer min-w-0 flex-1">
                 <input
