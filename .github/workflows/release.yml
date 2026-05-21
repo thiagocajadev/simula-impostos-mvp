@@ -96,7 +96,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prune old releases (keep latest 2)
+      - name: Prune old releases and tags (keep latest 2)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -105,5 +105,12 @@ jobs:
             | tail -n +3 \
             | while read tag; do
                 echo "Deleting release and tag: $tag"
-                gh release delete "$tag" --yes --cleanup-tag
+                gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || true
+              done
+          git fetch --tags --prune
+          git tag --sort=-version:refname \
+            | tail -n +3 \
+            | while read tag; do
+                echo "Deleting orphaned tag: $tag"
+                git push origin --delete "$tag" 2>/dev/null || true
               done
