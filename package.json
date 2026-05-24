@@ -52,6 +52,7 @@
   "build": {
     "appId": "br.com.simulaimpostos.mvp",
     "productName": "Simula Impostos",
+    "publish": null,
     "directories": {
       "output": "dist",
       "buildResources": "resources"
