@@ -20,7 +20,7 @@ function CurrentTaxesSection() {
       </p>
 
       <div className="space-y-2">
-        {keys.map((key) => {
+        {keys.map((key, index) => {
           const tax = taxes[key];
           return (
             <div key={key} className={`imposto-row ${!tax.enabled ? "opacity-50" : ""}`}>
@@ -39,8 +39,9 @@ function CurrentTaxesSection() {
                     <div className="group relative">
                       <Info size={12} className="text-slate-400 cursor-help" />
                       <div
-                        className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block z-10
-                                      bg-slate-800 text-white text-xs rounded-lg px-3 py-2 w-64 shadow-xl"
+                        className={`absolute left-0 hidden group-hover:block z-10
+                                      bg-slate-800 text-white text-xs rounded-lg px-3 py-2 w-64 shadow-xl
+                                      ${index === 0 ? "top-full mt-1.5" : "bottom-full mb-1.5"}`}
                       >
                         <p className="font-semibold mb-0.5">{CURRENT_TAX_LABELS[key]}</p>
                         <p className="text-slate-300">{TAX_DESCRIPTIONS[key]}</p>

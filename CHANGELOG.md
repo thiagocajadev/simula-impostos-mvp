@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased] — 2026-05-24
+
+### Fixed
+
+- Tooltip do ícone de informação (ⓘ) cortado no topo para o primeiro imposto em ambas as seções (Regime Atual e Pós Reforma): primeiro item agora abre o balão abaixo (`top-full`); demais continuam abrindo acima (`bottom-full`).
+
 ## [1.0.4] — 2026-05-21
 
 ### Added

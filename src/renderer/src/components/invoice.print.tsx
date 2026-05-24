@@ -71,7 +71,14 @@ function TaxCell({
         background: enabled ? "transparent" : "#f1f5f9",
       }}
     >
-      <div style={{ fontSize: 7, color: enabled ? "#777" : "#94a3b8", fontWeight: 700, textTransform: "uppercase" }}>
+      <div
+        style={{
+          fontSize: 7,
+          color: enabled ? "#777" : "#94a3b8",
+          fontWeight: 700,
+          textTransform: "uppercase",
+        }}
+      >
         {name}
       </div>
       <div style={{ fontSize: 7, color: enabled ? "#999" : "#94a3b8" }}>{rate}%</div>
@@ -602,7 +609,14 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
               padding: "6px 10px",
               borderLeft: "1px solid #e2e8f0",
               borderRight: "1px solid #e2e8f0",
-              background: subtotal > 0 ? (reformDiff < 0 ? "#f0fdf4" : reformDiff > 0 ? "#fef2f2" : "#f8fafc") : "transparent",
+              background:
+                subtotal > 0
+                  ? reformDiff < 0
+                    ? "#f0fdf4"
+                    : reformDiff > 0
+                      ? "#fef2f2"
+                      : "#f8fafc"
+                  : "transparent",
             }}
           >
             <div
@@ -639,7 +653,8 @@ function DanfeContent({ invoice }: { invoice: Invoice }) {
                   marginTop: 2,
                 }}
               >
-                {Math.abs((reformDiff / invoice.totalCurrentTaxes) * 100).toFixed(1)}% em relação ao regime atual
+                {Math.abs((reformDiff / invoice.totalCurrentTaxes) * 100).toFixed(1)}% em relação ao
+                regime atual
               </div>
             )}
           </div>
@@ -854,9 +869,18 @@ function InvoicePrint() {
         </div>
       </div>
 
-      <div ref={scrollAreaRef} className="print-scroll-area flex-1 overflow-auto py-8 px-4 flex justify-center">
-        <div className="print-zoom-wrapper" style={{ zoom: zoom / 100, transformOrigin: "top center" }}>
-          <div className="print-danfe bg-white shadow-2xl" style={{ width: "210mm", minHeight: "297mm" }}>
+      <div
+        ref={scrollAreaRef}
+        className="print-scroll-area flex-1 overflow-auto py-8 px-4 flex justify-center"
+      >
+        <div
+          className="print-zoom-wrapper"
+          style={{ zoom: zoom / 100, transformOrigin: "top center" }}
+        >
+          <div
+            className="print-danfe bg-white shadow-2xl"
+            style={{ width: "210mm", minHeight: "297mm" }}
+          >
             <DanfeContent invoice={currentInvoice} />
           </div>
         </div>
