@@ -2,6 +2,10 @@
 
 ## [Unreleased] — 2026-05-24
 
+### Added
+
+- Build scripts (`dist:win`, `dist:linux`, `dist:mac`) agora geram artefatos em subpastas separadas por S.O. (`dist/Windows/`, `dist/Linux/`, `dist/Mac/`); `artifactName` prefixado com `WINDOWS-`, `LINUX-`, `MAC-` em UPPERCASE para facilitar identificação nos assets do GitHub Release.
+
 ### Fixed
 
 - Tooltip do ícone de informação (ⓘ) cortado no topo para o primeiro imposto em ambas as seções (Regime Atual e Pós Reforma): primeiro item agora abre o balão abaixo (`top-full`); demais continuam abrindo acima (`bottom-full`).
