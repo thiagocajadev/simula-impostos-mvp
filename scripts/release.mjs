@@ -23,13 +23,25 @@ function run() {
 
   const tag = `v${nextVersion}`;
 
+  pruneLocalTags(tag);
+
   exec("git add package.json");
   exec(`git commit -m "chore: release ${tag}"`);
   exec(`git tag ${tag}`);
   exec("git push");
-  exec("git push --tags");
+  exec(`git push origin ${tag}`);
 
   console.log(`Released ${tag}`);
+}
+
+function pruneLocalTags(keepTag) {
+  const output = execSync("git tag --sort=-version:refname").toString().trim();
+  if (!output) { return; }
+
+  const tags = output.split("\n").filter((tag) => tag !== keepTag);
+  for (const tag of tags) {
+    execSync(`git tag -d ${tag}`, { stdio: "inherit" });
+  }
 }
 
 function bumpVersion(current, type) {
