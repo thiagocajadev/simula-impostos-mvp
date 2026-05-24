@@ -3,6 +3,10 @@ import { registerInvoiceHandlers } from "./invoice.ipc";
 import { registerPrintHandlers } from "./print.ipc";
 import { createWindow } from "./window";
 
+if (process.platform === "linux") {
+  app.commandLine.appendSwitch("no-sandbox");
+}
+
 registerInvoiceHandlers();
 registerPrintHandlers();
 
