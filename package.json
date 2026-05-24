@@ -21,6 +21,8 @@
     "dist:mac": "electron-vite build && electron-builder --mac --config.directories.output=dist/Mac",
     "bump": "node .ai/tooling/scripts/bump-version.mjs",
     "release": "node scripts/release.mjs",
+    "release:minor": "node scripts/release.mjs minor",
+    "release:major": "node scripts/release.mjs major",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
     "lint:biome": "biome check .",
     "lint:biome:fix": "biome check --write ."
