@@ -27,10 +27,12 @@ jobs:
 
       - run: npm run dist:win
 
+      # why: o artefato só serve ao job publish desta mesma run; com 90 dias, ocupava a cota de storage.
       - uses: actions/upload-artifact@v4
         with:
           name: windows
           path: dist/Windows/*.exe
+          retention-days: 1
 
   build-linux:
     runs-on: ubuntu-latest
@@ -52,6 +54,7 @@ jobs:
           path: |
             dist/Linux/*.AppImage
             dist/Linux/*.deb
+          retention-days: 1
 
   build-mac:
     runs-on: macos-latest
@@ -71,6 +74,7 @@ jobs:
         with:
           name: mac
           path: dist/Mac/*.dmg
+          retention-days: 1
 
   publish:
     needs: [build-windows, build-linux, build-mac]

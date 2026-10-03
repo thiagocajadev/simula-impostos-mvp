@@ -4,6 +4,7 @@
 
 ### Added
 
+- `retention-days: 1` nos três uploads de artefato do `release.yml` (Windows, Linux e Mac). Os artefatos só servem ao job `publish` da mesma run, e a retenção padrão de 90 dias contava contra a cota de storage do Actions da conta.
 - Build scripts (`dist:win`, `dist:linux`, `dist:mac`) agora geram artefatos em subpastas separadas por S.O. (`dist/Windows/`, `dist/Linux/`, `dist/Mac/`); `artifactName` prefixado com `WINDOWS-`, `LINUX-`, `MAC-` em UPPERCASE para facilitar identificação nos assets do GitHub Release.
 
 ### Fixed
